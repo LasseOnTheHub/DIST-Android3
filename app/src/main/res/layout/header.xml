@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="140dp"
+    android:background="@drawable/cleanbackground">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:paddingBottom="15dp"
+        android:paddingLeft="15dp"
+        android:id="@+id/linearLayout">
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="sans-serif"
+        android:gravity="bottom"
+        android:text="Lasse Birkegaard Sørensen"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:gravity="bottom"
+            android:text="LasseBirkegaard91@gmail.com"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/profileImageView"
+        android:layout_width="200px"
+        android:layout_height="200px"
+        android:layout_alignParentTop="false"
+        android:layout_marginTop="20px"
+        app:srcCompat="?android:attr/textSelectHandle"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
