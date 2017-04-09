@@ -8,5 +8,9 @@
     android:id="@+id/item_startFragment"
     android:title="Forside"
     android:checkable="true"/>
+        <item
+            android:id="@+id/item_CreateEventFragment"
+            android:title="Opret Event"
+            android:checkable="true"/>
     </group>
 </menu>

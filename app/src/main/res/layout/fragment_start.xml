@@ -1,14 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dist.dist_android.StartFragment">
+    android:background="@android:color/white"
+    android:fitsSystemWindows="true">
 
+    <include layout="@layout/content_start" />
 
-    <Button
-        android:id="@+id/testButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test" />
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

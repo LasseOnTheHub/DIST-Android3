@@ -26,10 +26,10 @@ import java.util.Map;
 
 public class CustomRestRequestArray {
     Authorizer authorizer;
-    String response;
+    ArrayList<Event> events;
 
     public ArrayList<Event> getEvents(Context context, String url) throws JSONException {
-        final ArrayList<Event> events = new ArrayList<Event>();
+       events = new ArrayList<>();
         authorizer = new Authorizer(context);
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest

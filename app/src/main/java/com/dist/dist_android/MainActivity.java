@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -67,9 +69,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             case R.id.item_startFragment:
                 //Sætter et nyt fragment
-                Fragment wordFragment = new StartFragment();
+                Fragment startFragment = new StartFragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, wordFragment)
+                        .replace(R.id.content_frame, startFragment)
+                        .commit();
+                break;
+            case R.id.item_CreateEventFragment:
+                Fragment createEventFragment = new CreateEventFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_frame, createEventFragment)
                         .commit();
                 break;
         }
