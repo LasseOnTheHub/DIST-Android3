@@ -2,6 +2,7 @@ package com.dist.dist_android;
 
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,12 +32,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomRestRequest;
 import com.dist.dist_android.Logic.CustomRestRequestArray;
 import com.dist.dist_android.POJOS.Event;
 import com.dist.dist_android.TempForRecycler.EventsAdapter;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -181,5 +182,6 @@ public class StartFragment extends Fragment {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
+
 
 }

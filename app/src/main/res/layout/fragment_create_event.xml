@@ -5,73 +5,219 @@
     android:layout_height="match_parent"
     tools:context="com.dist.dist_android.CreateEventFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ScrollView01"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <TextView
-            android:id="@+id/headlineTextView"
-            android:layout_width="160dp"
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="25"
-            android:gravity="center_horizontal"
-            android:inputType="textPersonName"
+            android:layout_marginTop="16dp"
             android:text="Create Event"
-            android:textSize="25dp"
-            app:layout_constraintHorizontal_bias="0.502"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" />
+            tools:layout_constraintLeft_creator="1"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintTop_creator="1" />
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/nameEditTexLayoutt"
-            android:layout_width="321dp"
-            android:layout_height="54dp"
-            android:layout_marginTop="27dp"
-            app:layout_constraintTop_toBottomOf="@+id/headlineTextView"
-            android:layout_marginLeft="8dp"
+            android:id="@+id/dateStartTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginRight="8dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias="0.51"
+            app:layout_constraintRight_toLeftOf="@+id/timeInputLayout"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionInputLayout8">
+
+            <EditText
+                android:id="@+id/dateStartEditText"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Start Date" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/DateEndTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/timeEndTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@+id/dateStartTextInputLayout">
+
+            <EditText
+                android:id="@+id/dateEndEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:hint="End Date" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/timeEndTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp">
+            android:layout_marginTop="8dp"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toRightOf="@+id/DateEndTextInputLayout"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timeInputLayout">
+
+            <EditText
+                android:id="@+id/timeEndEditText"
+                android:layout_width="match_parent"
+                android:focusable="false"
+                android:layout_height="wrap_content"
+                android:hint="End Time" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/nameTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            app:errorEnabled="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            tools:layout_constraintLeft_creator="1"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintTop_creator="1">
 
             <EditText
                 android:id="@+id/nameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Event name" />
+                android:hint="Name" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/descriptionEditTextLayout"
-            android:layout_width="313dp"
-            android:layout_height="103dp"
+            android:id="@+id/timeInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/nameEditTexLayoutt"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginRight="8dp"
+            android:weightSum="1"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toRightOf="@+id/dateStartTextInputLayout"
             app:layout_constraintRight_toRightOf="parent"
-            tools:layout_editor_absoluteY="133dp"
-            tools:layout_editor_absoluteX="-78dp">
+            app:layout_constraintTop_toBottomOf="@+id/descriptionInputLayout8">
+
+            <EditText
+                android:id="@+id/timeStartEditText"
+                android:layout_width="match_parent"
+                android:focusable="false"
+                android:layout_height="wrap_content"
+                android:hint="StartTime" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/descriptionInputLayout8"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameTextInputLayout"
+            tools:layout_constraintLeft_creator="1"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintTop_creator="1">
 
             <EditText
                 android:id="@+id/descriptionEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="hint"
+                android:hint="Description"
                 android:inputType="textMultiLine" />
         </android.support.design.widget.TextInputLayout>
 
+        <CheckBox
+            android:id="@+id/publicCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="Public Event"
+            app:layout_constraintHorizontal_bias="0.057"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/addressTextInputLayout" />
+
+        <CheckBox
+            android:id="@+id/privateCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="0dp"
+            android:text="Private Event"
+            app:layout_constraintHorizontal_bias="0.058"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/publicCheckBox" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/addressTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="57dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/DateEndTextInputLayout">
+
+            <EditText
+                android:id="@+id/addressEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Address" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/createEventButton"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="Create Event"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/privateCheckBox"
+            app:layout_constraintHorizontal_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 </FrameLayout>
