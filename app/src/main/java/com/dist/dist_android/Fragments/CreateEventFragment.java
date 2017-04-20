@@ -1,4 +1,4 @@
-package com.dist.dist_android;
+package com.dist.dist_android.Fragments;
 
 
 import android.app.DatePickerDialog;
@@ -17,22 +17,17 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.Authorizer;
+import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
+import com.dist.dist_android.Logic.EventProvider;
+import com.dist.dist_android.POJOS.EventPackage.Event;
+import com.dist.dist_android.R;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 
 /**
@@ -81,7 +76,7 @@ public class CreateEventFragment extends Fragment {
 
         nameInputLayout.setError("Eksempel på en fejlbesked");
 
-        createEventButton.setOnClickListener(new View.OnClickListener() {
+/*        createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -90,7 +85,7 @@ public class CreateEventFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
 
 
         /**
@@ -169,8 +164,26 @@ public class CreateEventFragment extends Fragment {
         return rootView;
     }
 
-    private void createEvent(final Context context) throws JSONException {
-        RequestQueue queue = Volley.newRequestQueue(context);
+/*    private void createEvent(final Context context) throws JSONException {
+
+        EventProvider.getInstance().createEvent(1,
+                nameEditText.getText().toString(),
+                descriptionEditText.getText().toString(),
+                1491789098,
+                1491789099,
+                true,
+                addressEditText.getText().toString(),
+                new EventCreatedListener<Event>() {
+            @Override
+            public void getResult(Event event) {
+                Toast.makeText(context,
+                        "Sucess: " + event.getName()+" got created",
+                        Toast.LENGTH_LONG).show();
+            }
+        });*/
+
+    }
+ /*       RequestQueue queue = Volley.newRequestQueue(context);
         String url = "http://ubuntu4.javabog.dk:3028/rest/api/events";
         final JSONObject jsonBody = new JSONObject("{" +
                 "id: "+ 1 +","+
@@ -210,4 +223,4 @@ public class CreateEventFragment extends Fragment {
         };
         queue.add(jsonObjectRequest);
     }
-}
+}*/

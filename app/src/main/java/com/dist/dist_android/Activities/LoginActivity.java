@@ -1,4 +1,4 @@
-package com.dist.dist_android;
+package com.dist.dist_android.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,14 +9,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.Authorizer;
+import com.dist.dist_android.Logic.EventProvider;
+import com.dist.dist_android.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         authorizer = new Authorizer(this);
+        //Calls the EventProvider and adds the context only once
+        EventProvider.getInstance(this);
 
         usernameEditText = (EditText) findViewById(R.id.usernameeditText);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
@@ -56,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://ubuntu4.javabog.dk:3028/rest/api/users/authenticate";
+        String url = "http://ubuntu4.javabog.dk:3028/rest/api/authentication";
         final JSONObject jsonBody = new JSONObject("{username: s145182,password: jegerenmissekat}");
 
         // Request a string response from the provided URL.

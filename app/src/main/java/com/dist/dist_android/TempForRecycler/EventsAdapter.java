@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.dist.dist_android.POJOS.Event;
+import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.R;
 
 import java.util.List;
@@ -55,8 +55,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Event event = eventList.get(position);
-        holder.title.setText(event.getName());
-        holder.count.setText(event.getAddress());
+        holder.title.setText(event.getDetails().getTitle());
+        holder.count.setText(event.getDetails().getAddress());
 
         // loading album cover using Glide library
         Glide.with(mContext).load(event.getThumbnail()).into(holder.thumbnail);

@@ -1,4 +1,4 @@
-package com.dist.dist_android;
+package com.dist.dist_android.Utilities;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;

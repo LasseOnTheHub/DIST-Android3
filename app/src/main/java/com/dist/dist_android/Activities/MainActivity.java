@@ -1,4 +1,4 @@
-package com.dist.dist_android;
+package com.dist.dist_android.Activities;
 
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,10 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.dist.dist_android.Fragments.CreateEventFragment;
+import com.dist.dist_android.R;
+import com.dist.dist_android.Fragments.StartFragment;
+import com.dist.dist_android.Utilities.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {

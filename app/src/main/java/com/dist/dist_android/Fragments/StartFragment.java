@@ -1,10 +1,8 @@
-package com.dist.dist_android;
+package com.dist.dist_android.Fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,30 +16,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.Authorizer;
+import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
 import com.dist.dist_android.Logic.CustomRestRequest;
-import com.dist.dist_android.Logic.CustomRestRequestArray;
-import com.dist.dist_android.POJOS.Event;
+import com.dist.dist_android.Logic.EventProvider;
+import com.dist.dist_android.POJOS.EventPackage.Event;
+import com.dist.dist_android.R;
 import com.dist.dist_android.TempForRecycler.EventsAdapter;
-
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 /**
@@ -54,7 +38,6 @@ public class StartFragment extends Fragment {
 
     private Button testButton;
     CustomRestRequest customRestRequest;
-    CustomRestRequestArray customRestRequestArray;
     Authorizer authorizer;
     ArrayList<Event> events;
 
@@ -67,8 +50,8 @@ public class StartFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_start, container, false);
 
+
         customRestRequest = new CustomRestRequest();
-        customRestRequestArray = new CustomRestRequestArray();
         authorizer = new Authorizer(rootView.getContext());
         events = new ArrayList<>();
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
@@ -81,61 +64,15 @@ public class StartFragment extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //Gets events and sets the adapter
-        RequestQueue queue = Volley.newRequestQueue(rootView.getContext());
-        JsonObjectRequest getRequest = new JsonObjectRequest
-                (Request.Method.GET, "http://ubuntu4.javabog.dk:3028/rest/api/events", null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray jsonEvents = response.getJSONArray("data");
-
-                            for (int i=0; i< jsonEvents.length(); i++){
-                                JSONObject obj = jsonEvents.getJSONObject(i);
-                                Event event = new Event(
-                                        obj.getInt("id"),
-                                        obj.getString("name"),
-                                        obj.getString("description"),
-                                        obj.getString("start"),
-                                        obj.getString("end"),
-                                        obj.getBoolean("isPublic"),
-                                        obj.getString("address")
-                                );
-                                events.add(event);
-                                adapter = new EventsAdapter(rootView.getContext(), events);
-                                recyclerView.setAdapter(adapter);
-                                adapter.notifyDataSetChanged();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.d("ERROR", "error => " + error.toString());
-                            }
-                        }) {
+        //Gets events from EventProvider and subscribes to the custom event listener (EventRecievedListener)
+        EventProvider.getInstance().catchEvents(new EventRecievedListener<ArrayList>() {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", "Bearer " + authorizer.getToken());
-                return params;
+            public void getResult(ArrayList events) {
+                adapter = new EventsAdapter(rootView.getContext(), events);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
-        };
-        queue.add(getRequest);
-
-
-
-
-/*        try {
-            Glide.with(this).load(R.drawable.cover).into((ImageView) rootView.findViewById(R.id.backdrop));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
-
+        });
         return rootView;
     }
     /**
