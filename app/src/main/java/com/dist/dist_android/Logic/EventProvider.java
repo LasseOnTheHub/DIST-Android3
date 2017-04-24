@@ -10,10 +10,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
+import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
 import com.dist.dist_android.POJOS.EventPackage.Details;
 import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.POJOS.EventPackage.Invitation;
+import com.dist.dist_android.POJOS.Organizer;
 import com.dist.dist_android.POJOS.User;
 
 import org.json.JSONArray;
@@ -65,9 +68,10 @@ public class EventProvider {
 
     //Creates an event. If the event is created it will return the created event
     //wich can be accessed through the listener.
-    /*public void createEvent(int id,
+    public void createEvent(int id,
                             String name,
                             String description,
+                            String imageURL,
                             long start,
                             long end,
                             boolean isPublic,
@@ -76,13 +80,13 @@ public class EventProvider {
 
         String url = baseUrl + "events";
         final JSONObject jsonBody = new JSONObject("{" +
-                "id: "+ 1 +","+
-                "name: \""+name +"\","+
+                "title: \""+name +"\","+
                 "description: \""+ description +"\","+
+                "address: \""+ address +"\","+
+                "imageURL: \""+imageURL+"\","+
                 "start: "+start+","+
                 "end: "+end+","+
-                "isPublic: "+isPublic+","+
-                "address: \""+address+"\""+
+                "isPublic: "+isPublic+""+
                 "}");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,
@@ -90,24 +94,13 @@ public class EventProvider {
                     String status;
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        try {
-                            eventHolder = new Event(
-                                    response.getInt("id"),
-                                    response.getString("name"),
-                                    response.getString("description"),
-                                    response.getString("start"),
-                                    response.getString("end"),
-                                    response.getBoolean("isPublic"),
-                                    response.getString("address")
-                            );
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (eventHolder!=null){
+                        if (response!=null){
                             Log.d(TAG,response.toString());
-                            listener.getResult(eventHolder);
+                            try {
+                                listener.getResult(response.getInt("id"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
                         }
                     }
@@ -125,7 +118,7 @@ public class EventProvider {
             }
         };
         requestQueue.add(jsonObjectRequest);
-    }*/
+    }
 
     //Gets all events, and notifies a custom eventlistener (eventRevieverListener.java)
     public void catchEvents(final EventRecievedListener<ArrayList> listener){
@@ -165,18 +158,26 @@ public class EventProvider {
                                     User user = new User();
                                     JSONObject jsonUser = jsonInvitations.getJSONObject(k).getJSONObject("user");
                                     user.setID(jsonUser.getInt("id"));
-                                    user.setName(jsonUser.getString("name"));
+                                    user.setName(jsonUser.getString("username"));
                                     invitation.setInvitedUser(user);
                                     invitationArrayList.add(invitation);
                                 }
                                 event.setInvitations(invitationArrayList);
 
                                 JSONArray jsonOrganizers = obj.getJSONArray("organizers");
-                                ArrayList<User> organizers = new ArrayList<>();
+                                ArrayList<Organizer> organizers = new ArrayList<>();
+
                                 for(int l=0;l<jsonOrganizers.length();l++){
-                                    User organizer = new User();
-                                    organizer.setID(jsonOrganizers.getJSONObject(l).getInt("id"));
-                                    organizer.setName(jsonOrganizers.getJSONObject(l).getString("name"));
+                                    Organizer organizer = new Organizer();
+
+                                    organizer.setId(jsonOrganizers.getJSONObject(l).getInt("id"));
+                                    JSONObject organizerUser = jsonOrganizers.getJSONObject(l).getJSONObject("user");
+
+                                    organizer.setUser(new User(
+                                            organizerUser.getInt("id"),
+                                            organizerUser.getString("username")));
+                                    organizer.setEventID(jsonOrganizers.getJSONObject(l).getInt("event_id"));
+
                                     organizers.add(organizer);
                                 }
                                 event.setOrganizers(organizers);
@@ -202,6 +203,43 @@ public class EventProvider {
             }
         };
         requestQueue.add(getRequest);
+    }
+
+    public void sendInvite(int eventID, int invitedUser,final InvitationSentListener listener) throws JSONException {
+        String url = baseUrl + "events/"+eventID+"/invitations";
+        final JSONObject jsonBody = new JSONObject("{" +
+                "user_id:"+invitedUser+""+
+                "}");
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,
+                new Response.Listener<JSONObject>() {
+                    String status;
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (response!=null){
+                            Log.d(TAG,response.toString());
+                            try {
+                                listener.getResult(response.getInt("id"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR", "error => " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Bearer " + authorizer.getToken());
+                return params;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
     }
 
 

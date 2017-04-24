@@ -19,10 +19,13 @@ import android.widget.Toast;
 
 import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
+import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
 import com.dist.dist_android.Logic.EventProvider;
 import com.dist.dist_android.POJOS.EventPackage.Event;
+import com.dist.dist_android.POJOS.User;
 import com.dist.dist_android.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
@@ -43,7 +46,6 @@ public class CreateEventFragment extends Fragment {
     private EditText nameEditText;
     private EditText descriptionEditText;
     private CheckBox publicEventCheckBox;
-    private CheckBox privateEventCheckBox;
     private Button createEventButton;
     private TextInputLayout nameInputLayout;
     private Authorizer authorizer;
@@ -70,13 +72,10 @@ public class CreateEventFragment extends Fragment {
         descriptionEditText = (EditText) rootView.findViewById(R.id.descriptionEditText);
         addressEditText = (EditText) rootView.findViewById(R.id.addressEditText);
         publicEventCheckBox = (CheckBox) rootView.findViewById(R.id.publicCheckBox);
-        privateEventCheckBox = (CheckBox) rootView.findViewById(R.id.privateCheckBox);
         createEventButton = (Button) rootView.findViewById(R.id.createEventButton);
         nameInputLayout = (TextInputLayout) rootView.findViewById(R.id.nameTextInputLayout);
 
-        nameInputLayout.setError("Eksempel på en fejlbesked");
-
-/*        createEventButton.setOnClickListener(new View.OnClickListener() {
+        createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -85,7 +84,7 @@ public class CreateEventFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        });*/
+        });
 
 
         /**
@@ -96,30 +95,30 @@ public class CreateEventFragment extends Fragment {
         timeStartEditText = (EditText) rootView.findViewById(R.id.timeStartEditText);
         timeEndEditText = (EditText) rootView.findViewById(R.id.timeEndEditText);
         myCalendar = Calendar.getInstance();
-        timeStartEditText.setOnClickListener(new View.OnClickListener(){
+        timeStartEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new TimePickerDialog(rootView.getContext(),startTime,12,00,true).show();
+                new TimePickerDialog(rootView.getContext(), startTime, 12, 00, true).show();
             }
         });
         startTime = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                timeStartEditText.setText(i+":"+i1);
+                timeStartEditText.setText(i + ":" + i1);
             }
         };
 
-        timeEndEditText.setOnClickListener(new View.OnClickListener(){
+        timeEndEditText.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                new TimePickerDialog(rootView.getContext(),endTime,12,00,true).show();
+                new TimePickerDialog(rootView.getContext(), endTime, 12, 00, true).show();
             }
         });
         endTime = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                timeEndEditText.setText(i+":"+i1);
+                timeEndEditText.setText(i + ":" + i1);
             }
         };
 
@@ -164,63 +163,42 @@ public class CreateEventFragment extends Fragment {
         return rootView;
     }
 
-/*    private void createEvent(final Context context) throws JSONException {
-
-        EventProvider.getInstance().createEvent(1,
+    private void createEvent(final Context context) throws JSONException {
+        EventProvider.getInstance().createEvent(
+                1,
                 nameEditText.getText().toString(),
                 descriptionEditText.getText().toString(),
+                "www.etbillede.dk",
                 1491789098,
                 1491789099,
                 true,
                 addressEditText.getText().toString(),
                 new EventCreatedListener<Event>() {
+                    @Override
+                    public void getResult(Integer result) {
+                        if(result!=null){
+                            try {
+                                sendInvites(context,result);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        Toast.makeText(context,
+                                "Sucess: " + result.toString() + " got created",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+    }
+    private void sendInvites(final Context context, int eventID) throws JSONException{
+        EventProvider.getInstance().sendInvite(eventID,100, new InvitationSentListener() {
             @Override
-            public void getResult(Event event) {
+            public void getResult(Integer result) {
                 Toast.makeText(context,
-                        "Sucess: " + event.getName()+" got created",
+                        "Sucess: " + result.toString() + " got created",
                         Toast.LENGTH_LONG).show();
             }
-        });*/
-
+        });
     }
- /*       RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "http://ubuntu4.javabog.dk:3028/rest/api/events";
-        final JSONObject jsonBody = new JSONObject("{" +
-                "id: "+ 1 +","+
-                "name: \""+nameEditText.getText() +"\","+
-                "description: \""+ descriptionEditText.getText() +"\","+
-                "start: "+1491789098+","+
-                "end: "+1491799098+","+
-                "isPublic: "+true+","+
-                "address: \""+addressEditText.getText()+"\""+
-                "}");
-
-        // Request a string response from the provided URL.
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,
-                new Response.Listener<JSONObject>() {
-                    String status;
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (response.toString() !=""){
-                                Toast.makeText(context,
-                                        "Sucess: " + authorizer.getToken(),
-                                        Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context,
-                        error.toString(), Toast.LENGTH_SHORT).show();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", "Bearer " + authorizer.getToken());
-                return params;
-            }
-        };
-        queue.add(jsonObjectRequest);
-    }
-}*/
+}

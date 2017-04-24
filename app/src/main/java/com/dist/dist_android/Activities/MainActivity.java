@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.dist.dist_android.Fragments.CreateEventFragment;
 import com.dist.dist_android.R;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout mDrawerLayout;
     private ImageView profilePicture;
+    private TextView navigationHeaderName;
 
 
     @Override
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .resize(800, 800)
                 .centerCrop()
                 .into(profilePicture);
+        navigationHeaderName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.navigationDrawerNameTextView);
+        navigationHeaderName.setText("UserId");
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this,

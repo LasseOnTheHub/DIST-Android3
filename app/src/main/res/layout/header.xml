@@ -16,12 +16,13 @@
         android:id="@+id/linearLayout">
 
         <TextView
+        android:id="@+id/navigationDrawerNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="sans-serif"
         android:gravity="bottom"
-        android:text="Lasse Birkegaard Sørensen"
+        android:text="User"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
         />
@@ -31,7 +32,7 @@
             android:layout_weight="1"
             android:fontFamily="sans-serif"
             android:gravity="bottom"
-            android:text="LasseBirkegaard91@gmail.com"
+            android:text="user@dtu.dk"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             />

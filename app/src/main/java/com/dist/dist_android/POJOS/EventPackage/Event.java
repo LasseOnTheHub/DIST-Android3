@@ -1,5 +1,6 @@
 package com.dist.dist_android.POJOS.EventPackage;
 
+import com.dist.dist_android.POJOS.Organizer;
 import com.dist.dist_android.POJOS.User;
 import com.dist.dist_android.R;
 
@@ -16,7 +17,7 @@ public class Event {
     private     int                     id;
     private     Details                 details;
     private     ArrayList<Invitation>   invitations;
-    private     ArrayList<User>         organizers;
+    private     ArrayList<Organizer>    organizers;
     private     Integer                 thumbnail;
 
     public Event() {
@@ -63,11 +64,11 @@ public class Event {
         this.invitations = invitations;
     }
 
-    public ArrayList<User> getOrganizers() {
+    public ArrayList<Organizer> getOrganizers() {
         return organizers;
     }
 
-    public void setOrganizers(ArrayList<User> organizers) {
+    public void setOrganizers(ArrayList<Organizer> organizers) {
         this.organizers = organizers;
     }
 }

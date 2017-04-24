@@ -59,7 +59,10 @@ public class LoginActivity extends AppCompatActivity {
     private void login() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://ubuntu4.javabog.dk:3028/rest/api/authentication";
-        final JSONObject jsonBody = new JSONObject("{username: s145182,password: jegerenmissekat}");
+        final JSONObject jsonBody = new JSONObject("{" +
+                "username: "+ usernameEditText.getText().toString().toLowerCase().trim() +"," +
+                "password: "+ passwordEditText.getText().toString().trim() +
+                "}");
 
         // Request a string response from the provided URL.
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,

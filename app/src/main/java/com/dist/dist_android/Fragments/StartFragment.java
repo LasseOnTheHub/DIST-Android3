@@ -4,6 +4,7 @@ package com.dist.dist_android.Fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,12 +17,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
-import com.dist.dist_android.Logic.CustomRestRequest;
+import com.dist.dist_android.Logic.CustomEventListeners.RecyclerItemClickListener;
 import com.dist.dist_android.Logic.EventProvider;
 import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.R;
@@ -37,7 +39,6 @@ public class StartFragment extends Fragment {
     private EventsAdapter adapter;
 
     private Button testButton;
-    CustomRestRequest customRestRequest;
     Authorizer authorizer;
     ArrayList<Event> events;
 
@@ -50,8 +51,6 @@ public class StartFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_start, container, false);
 
-
-        customRestRequest = new CustomRestRequest();
         authorizer = new Authorizer(rootView.getContext());
         events = new ArrayList<>();
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
@@ -63,6 +62,20 @@ public class StartFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(rootView.getContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Toast.makeText(rootView.getContext(),
+                                "Du klikkede" + view.getId(),
+                                Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
 
         //Gets events from EventProvider and subscribes to the custom event listener (EventRecievedListener)
         EventProvider.getInstance().catchEvents(new EventRecievedListener<ArrayList>() {
