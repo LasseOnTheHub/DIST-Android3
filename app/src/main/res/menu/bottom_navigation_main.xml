@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_public"
+        android:enabled="true"
+        android:icon="@drawable/ic_public_black_24dp"
+        android:title="Public Events"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_myEvents"
+        android:enabled="true"
+        android:icon="@drawable/ic_done_black_24dp"
+        android:title="My Events"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_invited"
+        android:enabled="true"
+        android:icon="@drawable/ic_event_black_24dp"
+        android:title="Invitations"
+        app:showAsAction="ifRoom" />
+</menu>

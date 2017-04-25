@@ -1,29 +1,21 @@
 package com.dist.dist_android.Activities;
 
-import android.support.design.widget.NavigationView;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.dist.dist_android.Fragments.CreateEventFragment;
 import com.dist.dist_android.R;
-import com.dist.dist_android.Fragments.StartFragment;
-import com.dist.dist_android.Utilities.CircleTransform;
-import com.squareup.picasso.Picasso;
+import com.dist.dist_android.Fragments.PublicEventsFragment;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-    private ImageView profilePicture;
-    private TextView navigationHeaderName;
-
+    BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,73 +24,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        profilePicture = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.profileImageView);
-        Picasso.with(this)
-                .load("http://www.beaconsinn.com/images/unique-information.com/wp-content/uploads/2016/04/funny-pictures-of-monkeys-smiling-490x419.png")
-                .transform(new CircleTransform())
-                .resize(800, 800)
-                .centerCrop()
-                .into(profilePicture);
-        navigationHeaderName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.navigationDrawerNameTextView);
-        navigationHeaderName.setText("UserId");
-
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                toolbar,
-                R.string.drawer_open,
-                R.string.drawer_close);
-
-        mDrawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 
         if (savedInstanceState == null) {
-            Fragment fragment = new StartFragment();
+            Fragment fragment = new PublicEventsFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.content_frame, fragment)  // tom container i layout
+                    .add(R.id.content, fragment)  // tom container i layout
                     .commit();
         }
     }
 
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-        item.setCheckable(true);
-        item.setChecked(true);
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_public:
+                    if(navigation.getSelectedItemId()!=item.getItemId()) {
+                        Fragment startFragment = new PublicEventsFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.content, startFragment)
+                                .commit();
+                    }
+                    return true;
+                case R.id.action_myEvents:
+                    if(navigation.getSelectedItemId()!=item.getItemId()) {
 
-        switch (item.getItemId())
-        {
-            case R.id.item_startFragment:
-                //Sætter et nyt fragment
-                Fragment startFragment = new StartFragment();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, startFragment)
-                        .commit();
-                break;
-            case R.id.item_CreateEventFragment:
-                Fragment createEventFragment = new CreateEventFragment();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, createEventFragment)
-                        .commit();
-                break;
+                    }
+                    //mTextMessage.setText(R.string.title_dashboard);
+                    return true;
+                case R.id.action_invited:
+                    if(navigation.getSelectedItemId()!=item.getItemId()) {
+
+                    }
+                    //mTextMessage.setText(R.string.title_notifications);
+                    return true;
+            }
+            return false;
         }
-        hideDrawer();
-        return true;
-    }
 
-    private void showDrawer(){mDrawerLayout.openDrawer(GravityCompat.START);}
-    private void hideDrawer(){mDrawerLayout.closeDrawer(GravityCompat.START);}
-
-    public void onBackPressed()
-    {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START))
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        else
-            super.onBackPressed();
-    }
+    };
 }

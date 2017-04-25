@@ -2,9 +2,10 @@ package com.dist.dist_android.Fragments;
 
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -33,7 +34,7 @@ import com.dist.dist_android.TempForRecycler.EventsAdapter;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StartFragment extends Fragment {
+public class PublicEventsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private EventsAdapter adapter;
@@ -42,19 +43,30 @@ public class StartFragment extends Fragment {
     Authorizer authorizer;
     ArrayList<Event> events;
 
-    public StartFragment() {
+    public PublicEventsFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_start, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_publicevents, container, false);
 
         authorizer = new Authorizer(rootView.getContext());
         events = new ArrayList<>();
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+        FloatingActionButton myFab = (FloatingActionButton)  rootView.findViewById(R.id.fab);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Fragment createFragment = new CreateEventFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.content, createFragment)
+                        .commit();
+            }
+        });
+
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
@@ -88,6 +100,7 @@ public class StartFragment extends Fragment {
         });
         return rootView;
     }
+
     /**
      * RecyclerView item decoration - give equal margin around grid item
      */
