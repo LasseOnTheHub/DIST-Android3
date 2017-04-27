@@ -72,14 +72,16 @@ public class MyInvitedEventsFragment extends Fragment {
                 {
                     for(Invitation i: e.getInvitations())
                     {
-                            if (i.getInvitedUser().getID() ==authorizer.getId())
+                            if (i.getUser().getID() ==authorizer.getId())
                             {
                                 subsetEvents.add(e);
                                 break;
                             }
                     }
                 }
-                adapter = new EventsAdapter(rootView.getContext(), subsetEvents);
+                //adapter = new EventsAdapter(rootView.getContext(), subsetEvents);
+                adapter = EventsAdapter.getInstance();
+                adapter.setEventList(subsetEvents);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }

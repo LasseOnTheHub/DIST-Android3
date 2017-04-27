@@ -3,6 +3,8 @@ package com.dist.dist_android.POJOS.EventPackage;
 import com.dist.dist_android.POJOS.Organizer;
 import com.dist.dist_android.POJOS.User;
 import com.dist.dist_android.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -57,5 +59,11 @@ public class Event {
 
     public void setOrganizers(ArrayList<Organizer> organizers) {
         this.organizers = organizers;
+    }
+
+    public static  Event parseJSON(String response){
+        Gson gson = new GsonBuilder().create();
+        Event event = gson.fromJson(response,Event.class);
+        return event;
     }
 }

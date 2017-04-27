@@ -88,7 +88,9 @@ public class PublicEventsFragment extends Fragment {
                     }
                 }
 
-                adapter = new EventsAdapter(rootView.getContext(), subsetEvents);
+                //adapter = new EventsAdapter(rootView.getContext(), subsetEvents);
+                adapter = EventsAdapter.getInstance();
+                adapter.setEventList(subsetEvents);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }

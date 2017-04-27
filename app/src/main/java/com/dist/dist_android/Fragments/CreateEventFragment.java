@@ -1,17 +1,12 @@
 package com.dist.dist_android.Fragments;
 
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,16 +19,16 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.dist.dist_android.Activities.MainActivity;
 import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
+import com.dist.dist_android.Logic.CustomEventListeners.SingleEventRecievedListener;
 import com.dist.dist_android.Logic.EventProvider;
 import com.dist.dist_android.POJOS.EventPackage.Event;
-import com.dist.dist_android.POJOS.User;
+import com.dist.dist_android.POJOS.EventPackage.Invitation;
+import com.dist.dist_android.POJOS.Organizer;
 import com.dist.dist_android.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.ParseException;
@@ -66,6 +61,8 @@ public class CreateEventFragment extends Fragment {
     TimePickerDialog.OnTimeSetListener endTime;
     String myFormat = "dd/MM/yy";
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.GERMAN);
+    String myTimeFormat = "HH:mm";
+    SimpleDateFormat stf = new SimpleDateFormat(myTimeFormat,Locale.GERMAN);
 
 
 
@@ -88,16 +85,36 @@ public class CreateEventFragment extends Fragment {
         createEventButton = (Button) rootView.findViewById(R.id.createEventButton);
         nameInputLayout = (TextInputLayout) rootView.findViewById(R.id.nameTextInputLayout);
 
+        //Get arguments if any.
+        Bundle bundle = getArguments();
+        //If the arguments contains an event ID it means that this fragment was called
+        //from a onClick event on a existing event, and the values needs to be loaded for the correct state.
+        int eventID = 0;
+        eventID = bundle.getInt("EVENTID");
+        if(eventID!=0){
+            EventProvider.getInstance().catchEvent(eventID, new SingleEventRecievedListener() {
+                @Override
+                public void getResult(Event event) {
+                    switch (decideEventType(event)){
+                        case "INVITATIONEVENT":
+                            setInvitationEventFormState();
+                            return;
+                        case "MYEVENT":
+                            setMyEventFormState(event);
+                            return;
+                        case "PUBLICEVENT":
+                            setPublicEventFormState();
+                            return;
+                    }
+                }
+            });
+        }
+
 
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         //toolbar.setNavigationIcon(ContextCompat.getDrawable(rootView.getContext(),R.drawable.ic_keyboard_backspace_black_24dp));
         toolbar.setTitle("Opret Event");
-/*        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStackImmediate();
-            }
-        });*/
+
 
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,5 +248,45 @@ public class CreateEventFragment extends Fragment {
                         Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public String decideEventType(Event event){
+        for(Invitation i: event.getInvitations())
+        {
+            if (i.getUser().getID() ==authorizer.getId())
+            {
+                return "INVITATIONEVENT";
+            }
+        }
+        for (Organizer o: event.getOrganizers())
+        {
+            if (o.getUser().getID()==authorizer.getId())
+            {
+                return "MYEVENT";
+            }
+        }
+        return "PUBLICEVENT";
+    }
+
+    public void setMyEventFormState(Event event){
+        nameEditText.setText(event.getDetails().getTitle());
+        descriptionEditText.setText(event.getDetails().getDescription());
+        addressEditText.setText(event.getDetails().getAddress());
+        if(!event.getDetails().isPublic()){publicEventCheckBox.setChecked(true);}
+
+        //Get Date and time
+        Date startDate = new Date(event.getDetails().getStart()*1000L);
+        dateStartEditText.setText(sdf.format(startDate));
+        timeStartEditText.setText(stf.format(startDate));
+        Date endDate = new Date(event.getDetails().getEnd()*1000L);
+        dateEndEditText.setText(sdf.format(endDate));
+        timeEndEditText.setText(stf.format(endDate));
+
+    }
+    public void setPublicEventFormState(){
+
+    }
+    public void setInvitationEventFormState(){
+
     }
 }

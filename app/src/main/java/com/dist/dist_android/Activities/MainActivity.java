@@ -8,29 +8,60 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.dist.dist_android.Fragments.CreateEventFragment;
 import com.dist.dist_android.Fragments.MyEventsFragment;
 import com.dist.dist_android.Fragments.MyInvitedEventsFragment;
+import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.RecyclerItemsClickedListener;
+import com.dist.dist_android.Logic.EventProvider;
+import com.dist.dist_android.Logic.EventsAdapter;
+import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.R;
 import com.dist.dist_android.Fragments.PublicEventsFragment;
 
-public class MainActivity extends AppCompatActivity implements RecyclerItemsClickedListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     BottomNavigationView navigation;
+    EventsAdapter eventsAdapter;
+    EventProvider eventProvider;
+    ArrayList<Event> events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        eventProvider = EventProvider.getInstance(this);
+        eventsAdapter = EventsAdapter.getInstance(this);
+
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        eventsAdapter.setRecyclerItemsClickedListener(new RecyclerItemsClickedListener() {
+            @Override
+            public void onImageClick(int eventID) {
+                Toast.makeText(getApplicationContext(),
+                        "Du har trykket på: " + eventID,
+                        Toast.LENGTH_LONG).show();
+
+                Fragment createFragment = new CreateEventFragment();
+                Bundle args = new Bundle();
+                args.putInt("EVENTID",eventID);
+                createFragment.setArguments(args);
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content, createFragment)
+                        .commit();
+            }
+        });
 
 
         if (savedInstanceState == null) {
@@ -64,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerItemsClic
                                 .replace(R.id.content, myEventsFragment,"MY_EVENTS_FRAGMENT")
                                 .commit();
                     }
-                    //mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.action_invited:
                     if(getSupportFragmentManager().findFragmentByTag("INVITED_FRAGMENT")==null ||
@@ -76,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerItemsClic
                                     .commit();
                         }
                     }
-                    //mTextMessage.setText(R.string.title_notifications);
                     return true;
             }
             return false;
@@ -84,11 +113,4 @@ public class MainActivity extends AppCompatActivity implements RecyclerItemsClic
 
     };
 
-    @Override
-    public void onClick(int eventID) {
-        Fragment createEventsFragment = new CreateEventFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content, createEventsFragment,"CREATE_EVENT_FRAGMENT")
-                .commit();
-    }
 }

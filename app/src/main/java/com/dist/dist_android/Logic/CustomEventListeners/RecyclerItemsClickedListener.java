@@ -5,5 +5,5 @@ package com.dist.dist_android.Logic.CustomEventListeners;
  */
 
 public interface RecyclerItemsClickedListener {
-    void onClick(int eventID);
+    void onImageClick(int eventID);
 }

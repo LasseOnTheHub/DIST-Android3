@@ -13,6 +13,7 @@ import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
+import com.dist.dist_android.Logic.CustomEventListeners.SingleEventRecievedListener;
 import com.dist.dist_android.POJOS.EventPackage.Details;
 import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.POJOS.EventPackage.Invitation;
@@ -25,7 +26,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +42,7 @@ public class EventProvider {
     public RequestQueue requestQueue;
 
     ArrayList<Event> events;
+    Event event;
     ArrayList<User> user;
     Event eventHolder;
 
@@ -65,6 +66,35 @@ public class EventProvider {
                     " is not initialized, call getInstance(...) first");
         }
         return instance;
+    }
+
+    public void catchEvent(int eventID, final SingleEventRecievedListener listener){
+        event = new Event();
+
+        String url = baseUrl+"events/"+eventID;
+        JsonObjectRequest getRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                            event = Event.parseJSON(response.toString());
+                            listener.getResult(event);
+                    }
+                },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("ERROR", "error => " + error.toString());
+                            }
+                        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Bearer " + authorizer.getToken());
+                return params;
+            }
+        };
+        requestQueue.add(getRequest);
+
     }
 
     //Creates an event. If the event is created it will return the created event
@@ -154,15 +184,15 @@ public class EventProvider {
                                 ArrayList<Invitation> invitationArrayList = new ArrayList<>();
                                 for(int k=0; k<jsonInvitations.length();k++){
                                     Invitation invitation = new Invitation();
-                                    invitation.setInvitationID(jsonInvitations.getJSONObject(k).getInt("id"));
-                                    invitation.setAssociatedEventID(jsonInvitations.getJSONObject(k).getInt("event"));
+                                    invitation.setId(jsonInvitations.getJSONObject(k).getInt("id"));
+                                    invitation.setEvent(jsonInvitations.getJSONObject(k).getInt("event"));
 
 
                                     User user = new User();
                                     JSONObject jsonUser = jsonInvitations.getJSONObject(k).getJSONObject("user");
                                     user.setID(jsonUser.getInt("id"));
-                                    user.setName(jsonUser.getString("username"));
-                                    invitation.setInvitedUser(user);
+                                    user.setUsername(jsonUser.getString("username"));
+                                    invitation.setUser(user);
                                     invitationArrayList.add(invitation);
                                 }
                                 event.setInvitations(invitationArrayList);

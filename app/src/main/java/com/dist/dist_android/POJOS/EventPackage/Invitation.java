@@ -2,38 +2,45 @@ package com.dist.dist_android.POJOS.EventPackage;
 
 import com.dist.dist_android.POJOS.User;
 
-import java.util.ArrayList;
-
 /**
  * Created by lbirk on 20-04-2017.
  */
 
 public class Invitation {
-    private Integer         invitationID;
-    private User            invitedUser;
-    private Integer         associatedEventID;
+    private Integer id;
+    private User user;
+    private Integer event;
+    private boolean accepted;
 
-    public Integer getInvitationID() {
-        return invitationID;
+    public boolean isAccepted() {
+        return accepted;
     }
 
-    public void setInvitationID(Integer invitationID) {
-        this.invitationID = invitationID;
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
     }
 
-    public User getInvitedUser() {
-        return invitedUser;
+    public Integer getId() {
+        return id;
     }
 
-    public void setInvitedUser(User invitedUser) {
-        this.invitedUser = invitedUser;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Integer getAssociatedEventID() {
-        return associatedEventID;
+    public User getUser() {
+        return user;
     }
 
-    public void setAssociatedEventID(Integer associatedEventID) {
-        this.associatedEventID = associatedEventID;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Integer getEvent() {
+        return event;
+    }
+
+    public void setEvent(Integer event) {
+        this.event = event;
     }
 }

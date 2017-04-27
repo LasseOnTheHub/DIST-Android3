@@ -1,6 +1,5 @@
 package com.dist.dist_android.Logic;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dist.dist_android.Fragments.PublicEventsFragment;
 import com.dist.dist_android.Logic.CustomEventListeners.RecyclerItemsClickedListener;
 import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.R;
@@ -29,6 +27,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     private Context mContext;
     private List<Event> eventList;
 
+
+
+    private static EventsAdapter instance = null;
     private RecyclerItemsClickedListener recyclerItemsClickedListener;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -46,10 +47,27 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
         }
     }
 
-    public EventsAdapter(Context mContext, List<Event> eventList) {
+
+    private EventsAdapter(Context mContext) {
         this.mContext = mContext;
-        this.eventList = eventList;
     }
+
+    //Constructor for first time declaration with Context argument
+    public static synchronized EventsAdapter getInstance(Context mContext){
+        if(instance == null)
+            instance = new EventsAdapter(mContext);
+        return instance;
+    }
+
+    //Constructor withouth arguments to avoid needing to pass Context every time
+    public static synchronized EventsAdapter getInstance(){
+        if(instance == null){
+            throw new IllegalStateException(EventProvider.class.getSimpleName() +
+                    " is not initialized, call getInstance(...) first");
+        }
+        return instance;
+    }
+
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -89,20 +107,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
             }
         });
 
-/*        holder.thumbnail.setOnClickListener(new RecyclerItemsClickedListener(){
-            @Override
-            public void onClick(int eventID) {
-
-            }
-        } );*/
 
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int id = (int) view.getTag();
-                Toast.makeText(mContext,
-                        "Du klikkede på event med ID: " + id,
-                        Toast.LENGTH_LONG).show();
+                recyclerItemsClickedListener.onImageClick(id);
             }
         });
     }
@@ -146,5 +156,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     @Override
     public int getItemCount() {
         return eventList.size();
+    }
+
+    public void setEventList(List<Event> eventList) {
+        this.eventList = eventList;
+    }
+
+    public void setRecyclerItemsClickedListener(RecyclerItemsClickedListener recyclerItemsClickedListener) {
+        this.recyclerItemsClickedListener = recyclerItemsClickedListener;
     }
 }
