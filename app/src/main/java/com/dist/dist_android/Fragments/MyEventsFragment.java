@@ -1,8 +1,5 @@
 package com.dist.dist_android.Fragments;
 
-
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -27,6 +24,7 @@ import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
 import com.dist.dist_android.Logic.EventProvider;
 import com.dist.dist_android.POJOS.EventPackage.Event;
+import com.dist.dist_android.POJOS.Organizer;
 import com.dist.dist_android.R;
 import com.dist.dist_android.Logic.EventsAdapter;
 
@@ -34,23 +32,23 @@ import com.dist.dist_android.Logic.EventsAdapter;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PublicEventsFragment extends Fragment {
+public class MyEventsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private EventsAdapter adapter;
+
+    private Button testButton;
     Authorizer authorizer;
     ArrayList<Event> events;
 
-    OnFabPress mCallback;
-
-    public PublicEventsFragment() {
+    public MyEventsFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_publicevents, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_my_events, container, false);
 
         authorizer = new Authorizer(rootView.getContext());
         events = new ArrayList<>();
@@ -82,9 +80,13 @@ public class PublicEventsFragment extends Fragment {
             public void getResult(List<Event> events) {
 
                 ArrayList<Event> subsetEvents = new ArrayList<>();
-                for (Event e: events) {
-                    if (e.getDetails().isPublic()){
-                        subsetEvents.add(e);
+                for (Event e: events)
+                {
+                    for(Organizer o: e.getOrganizers()){
+                        if (o.getUser().getID()==authorizer.getId()){
+                            subsetEvents.add(e);
+                            break;
+                        }
                     }
                 }
 
@@ -141,8 +143,5 @@ public class PublicEventsFragment extends Fragment {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
-    public interface OnFabPress {
-        public void onFabPress();
-    }
 
 }

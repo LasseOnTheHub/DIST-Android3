@@ -1,5 +1,6 @@
-package com.dist.dist_android.TempForRecycler;
+package com.dist.dist_android.Logic;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.dist.dist_android.Fragments.PublicEventsFragment;
+import com.dist.dist_android.Logic.CustomEventListeners.RecyclerItemsClickedListener;
 import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -26,16 +29,20 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     private Context mContext;
     private List<Event> eventList;
 
+    private RecyclerItemsClickedListener recyclerItemsClickedListener;
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, count;
+        public TextView title, description;
         public ImageView thumbnail, overflow;
+        public int          eventId;
 
         public MyViewHolder(View view) {
             super(view);
             title = (TextView) view.findViewById(R.id.title);
-            count = (TextView) view.findViewById(R.id.count);
+            description = (TextView) view.findViewById(R.id.count);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
             overflow = (ImageView) view.findViewById(R.id.overflow);
+            eventId = 0;
         }
     }
 
@@ -56,10 +63,24 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Event event = eventList.get(position);
         holder.title.setText(event.getDetails().getTitle());
-        holder.count.setText(event.getOrganizers().get(0).getUser().getName());
+        holder.description.setText(event.getDetails().getDescription());
+        holder.thumbnail.setTag(event.getId());
 
-        // loading album cover using Glide library
-        Glide.with(mContext).load(event.getThumbnail()).into(holder.thumbnail);
+        /**
+         * Loads the provided thumbnailimage with the image URL
+         * If no imageURL is provided, a placeholder image is used.
+         */
+        if(event.getDetails().getImageURL().endsWith(".jpg")||
+                event.getDetails().getImageURL().endsWith(".png")){
+            Picasso.with(mContext)
+                    .load(event.getDetails().getImageURL())
+                    .into(holder.thumbnail);
+        }
+        else{
+            Picasso.with(mContext)
+                    .load("http://3.bp.blogspot.com/-xFIp1U2vz8w/UrBl-ZsVzyI/AAAAAAAACUE/qscQploleMg/s400/NoPhotoIcon.jpg")
+                    .into(holder.thumbnail);
+        }
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +88,25 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
                 showPopupMenu(holder.overflow);
             }
         });
+
+/*        holder.thumbnail.setOnClickListener(new RecyclerItemsClickedListener(){
+            @Override
+            public void onClick(int eventID) {
+
+            }
+        } );*/
+
+        holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int id = (int) view.getTag();
+                Toast.makeText(mContext,
+                        "Du klikkede på event med ID: " + id,
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
 
     /**
      * Showing popup menu when tapping on 3 dots

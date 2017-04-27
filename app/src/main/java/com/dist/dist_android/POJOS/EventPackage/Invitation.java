@@ -2,14 +2,16 @@ package com.dist.dist_android.POJOS.EventPackage;
 
 import com.dist.dist_android.POJOS.User;
 
+import java.util.ArrayList;
+
 /**
  * Created by lbirk on 20-04-2017.
  */
 
 public class Invitation {
-    private Integer     invitationID;
-    private User        invitedUser;
-    private Integer     associatedEventID;
+    private Integer         invitationID;
+    private User            invitedUser;
+    private Integer         associatedEventID;
 
     public Integer getInvitationID() {
         return invitationID;

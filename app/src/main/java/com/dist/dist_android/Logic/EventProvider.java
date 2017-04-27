@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -121,7 +122,7 @@ public class EventProvider {
     }
 
     //Gets all events, and notifies a custom eventlistener (eventRevieverListener.java)
-    public void catchEvents(final EventRecievedListener<ArrayList> listener){
+    public void catchEvents(final EventRecievedListener listener){
         events = new ArrayList<>();
         String url = baseUrl+"events";
         JsonObjectRequest getRequest = new JsonObjectRequest
@@ -155,6 +156,8 @@ public class EventProvider {
                                     Invitation invitation = new Invitation();
                                     invitation.setInvitationID(jsonInvitations.getJSONObject(k).getInt("id"));
                                     invitation.setAssociatedEventID(jsonInvitations.getJSONObject(k).getInt("event"));
+
+
                                     User user = new User();
                                     JSONObject jsonUser = jsonInvitations.getJSONObject(k).getJSONObject("user");
                                     user.setID(jsonUser.getInt("id"));

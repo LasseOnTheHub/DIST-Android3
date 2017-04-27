@@ -33,9 +33,17 @@ public class Authorizer {
         editor.putString("token",token);
         editor.commit();
     }
+    public void setId(int id){
+        editor.putInt("id", id);
+        editor.commit();
+    }
 
     public String getToken()
     {
         return prefs.getString("token","empty");
+    }
+    public Integer getId()
+    {
+        return prefs.getInt("id",0000);
     }
 }

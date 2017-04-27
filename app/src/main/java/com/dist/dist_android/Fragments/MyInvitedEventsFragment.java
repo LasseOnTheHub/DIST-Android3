@@ -1,10 +1,7 @@
 package com.dist.dist_android.Fragments;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +24,7 @@ import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
 import com.dist.dist_android.Logic.EventProvider;
 import com.dist.dist_android.POJOS.EventPackage.Event;
+import com.dist.dist_android.POJOS.EventPackage.Invitation;
 import com.dist.dist_android.R;
 import com.dist.dist_android.Logic.EventsAdapter;
 
@@ -34,39 +32,28 @@ import com.dist.dist_android.Logic.EventsAdapter;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PublicEventsFragment extends Fragment {
+public class MyInvitedEventsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private EventsAdapter adapter;
+
+    private Button testButton;
     Authorizer authorizer;
     ArrayList<Event> events;
 
-    OnFabPress mCallback;
-
-    public PublicEventsFragment() {
+    public MyInvitedEventsFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_publicevents, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_my_invited_events, container, false);
 
         authorizer = new Authorizer(rootView.getContext());
         events = new ArrayList<>();
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-        FloatingActionButton myFab = (FloatingActionButton)  rootView.findViewById(R.id.fab);
-        myFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Fragment createFragment = new CreateEventFragment();
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.content, createFragment)
-                        .commit();
-            }
-        });
-
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
@@ -75,19 +62,23 @@ public class PublicEventsFragment extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-
         //Gets events from EventProvider and subscribes to the custom event listener (EventRecievedListener)
         EventProvider.getInstance().catchEvents(new EventRecievedListener() {
             @Override
             public void getResult(List<Event> events) {
 
                 ArrayList<Event> subsetEvents = new ArrayList<>();
-                for (Event e: events) {
-                    if (e.getDetails().isPublic()){
-                        subsetEvents.add(e);
+                for (Event e: events)
+                {
+                    for(Invitation i: e.getInvitations())
+                    {
+                            if (i.getInvitedUser().getID() ==authorizer.getId())
+                            {
+                                subsetEvents.add(e);
+                                break;
+                            }
                     }
                 }
-
                 adapter = new EventsAdapter(rootView.getContext(), subsetEvents);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -141,8 +132,5 @@ public class PublicEventsFragment extends Fragment {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
-    public interface OnFabPress {
-        public void onFabPress();
-    }
 
 }

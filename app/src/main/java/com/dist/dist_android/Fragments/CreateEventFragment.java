@@ -1,12 +1,19 @@
 package com.dist.dist_android.Fragments;
 
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +24,7 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.dist.dist_android.Activities.MainActivity;
 import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
@@ -28,8 +36,10 @@ import com.dist.dist_android.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -57,6 +67,9 @@ public class CreateEventFragment extends Fragment {
     String myFormat = "dd/MM/yy";
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.GERMAN);
 
+
+
+
     public CreateEventFragment() {
         // Required empty public constructor
     }
@@ -75,12 +88,25 @@ public class CreateEventFragment extends Fragment {
         createEventButton = (Button) rootView.findViewById(R.id.createEventButton);
         nameInputLayout = (TextInputLayout) rootView.findViewById(R.id.nameTextInputLayout);
 
+
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        //toolbar.setNavigationIcon(ContextCompat.getDrawable(rootView.getContext(),R.drawable.ic_keyboard_backspace_black_24dp));
+        toolbar.setTitle("Opret Event");
+/*        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStackImmediate();
+            }
+        });*/
+
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
                     createEvent(rootView.getContext());
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
@@ -104,7 +130,7 @@ public class CreateEventFragment extends Fragment {
         startTime = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                timeStartEditText.setText(i + ":" + i1);
+                timeStartEditText.setText(String.format("%02d:%02d",i,i1));
             }
         };
 
@@ -118,7 +144,7 @@ public class CreateEventFragment extends Fragment {
         endTime = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                timeEndEditText.setText(i + ":" + i1);
+                timeEndEditText.setText(String.format("%02d:%02d",i,i1));
             }
         };
 
@@ -158,20 +184,27 @@ public class CreateEventFragment extends Fragment {
                 dateEndEditText.setText(sdf.format(myCalendar.getTime()));
             }
         };
-
-
         return rootView;
     }
 
-    private void createEvent(final Context context) throws JSONException {
+    private void createEvent(final Context context) throws JSONException, ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
+        String startDateTime = dateStartEditText.getText().toString()+" "+timeStartEditText.getText().toString();
+        String endDateTime = dateEndEditText.getText().toString()+" "+timeEndEditText.getText().toString();
+        Date startDate = simpleDateFormat.parse(startDateTime);
+        Date endDate = simpleDateFormat.parse(endDateTime);
+
+        Log.d("time", String.valueOf(startDate.getTime()));
+
         EventProvider.getInstance().createEvent(
                 1,
                 nameEditText.getText().toString(),
                 descriptionEditText.getText().toString(),
                 "www.etbillede.dk",
-                1491789098,
-                1491789099,
-                true,
+                startDate.getTime()/1000,
+                endDate.getTime()/1000,
+                publicEventCheckBox.isChecked(),
                 addressEditText.getText().toString(),
                 new EventCreatedListener<Event>() {
                     @Override
@@ -188,8 +221,6 @@ public class CreateEventFragment extends Fragment {
                                 Toast.LENGTH_LONG).show();
                     }
                 });
-
-
     }
     private void sendInvites(final Context context, int eventID) throws JSONException{
         EventProvider.getInstance().sendInvite(eventID,100, new InvitationSentListener() {
