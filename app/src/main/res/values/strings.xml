@@ -1,30 +1,30 @@
 <resources>
-    <string username="app_name">DIST-Android</string>
-    <string username="drawer_open">Open</string>
-    <string username="drawer_close">Close</string>
+    <string name="app_name">DIST-Android</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string username="hello_blank_fragment">Hello Start Fragment</string>
-    <string username="title_activity_login">Log ind</string>
+    <string name="hello_blank_fragment">Hello Start Fragment</string>
+    <string name="title_activity_login">Log ind</string>
 
     <!-- Strings related to login -->
-    <string username="prompt_email">Email</string>
-    <string username="prompt_password">Password (optional)</string>
-    <string username="action_sign_in">Sign in or register</string>
-    <string username="action_sign_in_short">Sign in</string>
-    <string username="error_invalid_email">This email address is invalid</string>
-    <string username="error_invalid_password">This password is too short</string>
-    <string username="error_incorrect_password">This password is incorrect</string>
-    <string username="error_field_required">This field is required</string>
-    <string username="permission_rationale">"Contacts permissions are needed for providing email
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
 
     <!-- Strings for Card view-->
-    <string username="action_settings">Settings</string>
-    <string username="action_add_favourite">Add to Favourites</string>
-    <string username="action_play_next">Play Next</string>
-    <string username="backdrop_title">LOVE MUSIC</string>
-    <string username="backdrop_subtitle">This season top 20 albums</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_add_favourite">Add to Favourites</string>
+    <string name="action_play_next">Play Next</string>
+    <string name="backdrop_title">LOVE MUSIC</string>
+    <string name="backdrop_subtitle">This season top 20 albums</string>
 
 </resources>
