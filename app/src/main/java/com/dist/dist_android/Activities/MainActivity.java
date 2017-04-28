@@ -56,13 +56,11 @@ public class MainActivity extends AppCompatActivity {
                 Bundle args = new Bundle();
                 args.putInt("EVENTID",eventID);
                 createFragment.setArguments(args);
-
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content, createFragment)
                         .commit();
             }
         });
-
 
         if (savedInstanceState == null) {
             Fragment fragment = new PublicEventsFragment();

@@ -16,9 +16,9 @@
         <activity android:name=".Activities.MainActivity"></activity>
         <activity android:name=".Activities.LoginActivity">
         <intent-filter>
-            <action android:username="android.intent.action.MAIN" />
+            <action android:name="android.intent.action.MAIN" />
 
-            <category android:username="android.intent.category.LAUNCHER" />
+            <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         </activity>
     </application>

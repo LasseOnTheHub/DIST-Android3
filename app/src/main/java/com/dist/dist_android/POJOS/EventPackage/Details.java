@@ -1,5 +1,8 @@
 package com.dist.dist_android.POJOS.EventPackage;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /**
  * Created by lbirk on 20-04-2017.
  */
@@ -92,5 +95,11 @@ public class Details {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public String parseJSON(){
+        Gson gson = new GsonBuilder().create();
+        String jsonString = gson.toJson(this, Details.class);
+        return jsonString;
     }
 }

@@ -4,10 +4,12 @@ package com.dist.dist_android.Fragments;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,14 +18,17 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
+import com.dist.dist_android.Logic.CustomEventListeners.EventUpdatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
 import com.dist.dist_android.Logic.CustomEventListeners.SingleEventRecievedListener;
 import com.dist.dist_android.Logic.EventProvider;
+import com.dist.dist_android.POJOS.EventPackage.Details;
 import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.POJOS.EventPackage.Invitation;
 import com.dist.dist_android.POJOS.Organizer;
@@ -50,8 +55,9 @@ public class CreateEventFragment extends Fragment {
     private EditText addressEditText;
     private EditText nameEditText;
     private EditText descriptionEditText;
-    private CheckBox publicEventCheckBox;
+    private CheckBox privateEventCheckbox;
     private Button createEventButton;
+    private TextView titleTextView;
     private TextInputLayout nameInputLayout;
     private Authorizer authorizer;
     private Calendar myCalendar;
@@ -60,12 +66,11 @@ public class CreateEventFragment extends Fragment {
     TimePickerDialog.OnTimeSetListener startTime;
     TimePickerDialog.OnTimeSetListener endTime;
     String myFormat = "dd/MM/yy";
-    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.GERMAN);
+    SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
     String myTimeFormat = "HH:mm";
-    SimpleDateFormat stf = new SimpleDateFormat(myTimeFormat,Locale.GERMAN);
-
-
-
+    SimpleDateFormat stf = new SimpleDateFormat(myTimeFormat);
+    String formState = "CREATEEVENT";
+    int eventID;
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -81,29 +86,31 @@ public class CreateEventFragment extends Fragment {
         nameEditText = (EditText) rootView.findViewById(R.id.nameEditText);
         descriptionEditText = (EditText) rootView.findViewById(R.id.descriptionEditText);
         addressEditText = (EditText) rootView.findViewById(R.id.addressEditText);
-        publicEventCheckBox = (CheckBox) rootView.findViewById(R.id.publicCheckBox);
+        privateEventCheckbox = (CheckBox) rootView.findViewById(R.id.privateCheckBox);
         createEventButton = (Button) rootView.findViewById(R.id.createEventButton);
+        titleTextView = (TextView) rootView.findViewById(R.id.textView3);
         nameInputLayout = (TextInputLayout) rootView.findViewById(R.id.nameTextInputLayout);
 
         //Get arguments if any.
         Bundle bundle = getArguments();
         //If the arguments contains an event ID it means that this fragment was called
         //from a onClick event on a existing event, and the values needs to be loaded for the correct state.
-        int eventID = 0;
+        eventID = 0;
         eventID = bundle.getInt("EVENTID");
         if(eventID!=0){
             EventProvider.getInstance().catchEvent(eventID, new SingleEventRecievedListener() {
                 @Override
                 public void getResult(Event event) {
-                    switch (decideEventType(event)){
+                    decideEventType(event);
+                    switch (formState){
                         case "INVITATIONEVENT":
-                            setInvitationEventFormState();
+                            setInvitationEventFormState(event);
                             return;
                         case "MYEVENT":
                             setMyEventFormState(event);
                             return;
                         case "PUBLICEVENT":
-                            setPublicEventFormState();
+                            setPublicEventFormState(event);
                             return;
                     }
                 }
@@ -119,6 +126,29 @@ public class CreateEventFragment extends Fragment {
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                switch (formState){
+                    case "INVITATIONEVENT":
+                        try {
+                            sendAcceptToInvitation(rootView.getContext(),eventID,authorizer.getId());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return;
+                    case "MYEVENT":
+                        try {
+                            updateEvent(rootView.getContext());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return;
+                    case "PUBLICEVENT":
+
+                        return;
+                    case "CREATEEVENT":
+                        return;
+                }
                 try {
                     createEvent(rootView.getContext());
                 } catch (JSONException e) {
@@ -221,7 +251,7 @@ public class CreateEventFragment extends Fragment {
                 "www.etbillede.dk",
                 startDate.getTime()/1000,
                 endDate.getTime()/1000,
-                publicEventCheckBox.isChecked(),
+                !privateEventCheckbox.isChecked(),
                 addressEditText.getText().toString(),
                 new EventCreatedListener<Event>() {
                     @Override
@@ -250,43 +280,163 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
-    public String decideEventType(Event event){
+    public void decideEventType(Event event){
+        if(event.getDetails().isPublic()) {
+            formState = "PUBLICEVENT";
+        }
         for(Invitation i: event.getInvitations())
         {
             if (i.getUser().getID() ==authorizer.getId())
             {
-                return "INVITATIONEVENT";
+                formState = "INVITATIONEVENT";
             }
         }
         for (Organizer o: event.getOrganizers())
         {
             if (o.getUser().getID()==authorizer.getId())
             {
-                return "MYEVENT";
+                formState = "MYEVENT";
             }
         }
-        return "PUBLICEVENT";
+    }
+
+    public void updateEvent(final Context context) throws ParseException, JSONException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
+        String startDateTime = dateStartEditText.getText().toString()+" "+timeStartEditText.getText().toString();
+        String endDateTime = dateEndEditText.getText().toString()+" "+timeEndEditText.getText().toString();
+        Date startDate = simpleDateFormat.parse(startDateTime);
+        Date endDate = simpleDateFormat.parse(endDateTime);
+
+        Details eventDetails = new Details();
+
+
+        eventDetails.setTitle(nameEditText.getText().toString());
+        eventDetails.setDescription(descriptionEditText.getText().toString());
+        eventDetails.setImageURL("www.etbillede.dk");
+        eventDetails.setStart(startDate.getTime()/1000);
+        eventDetails.setEnd(endDate.getTime()/1000);
+        eventDetails.setPublic(!privateEventCheckbox.isChecked());
+        eventDetails.setAddress(addressEditText.getText().toString());
+
+        EventProvider.getInstance().updateEvent(eventDetails,eventID, new EventUpdatedListener() {
+            @Override
+            public void getResult(boolean result) {
+                if(result){
+                    Toast.makeText(context,
+                            "Event " + eventID +" er blevet opdateret",
+                            Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(context,
+                            "Noget gik desværre galt, prøv igen.",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    public void sendAcceptToInvitation(final Context context, int eventID, int userID) throws JSONException {
+        EventProvider.getInstance().sendInvite(eventID, authorizer.getId(), new InvitationSentListener() {
+            @Override
+            public void getResult(Integer result) {
+                Toast.makeText(context,
+                        "You are now participating in the event!",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void setMyEventFormState(Event event){
         nameEditText.setText(event.getDetails().getTitle());
         descriptionEditText.setText(event.getDetails().getDescription());
         addressEditText.setText(event.getDetails().getAddress());
-        if(!event.getDetails().isPublic()){publicEventCheckBox.setChecked(true);}
+        if(!event.getDetails().isPublic()){privateEventCheckbox.setChecked(false);}
 
         //Get Date and time
-        Date startDate = new Date(event.getDetails().getStart()*1000L);
+        Date startDate = new Date(event.getDetails().getStart());
         dateStartEditText.setText(sdf.format(startDate));
         timeStartEditText.setText(stf.format(startDate));
-        Date endDate = new Date(event.getDetails().getEnd()*1000L);
+        Date endDate = new Date(event.getDetails().getEnd());
         dateEndEditText.setText(sdf.format(endDate));
         timeEndEditText.setText(stf.format(endDate));
 
-    }
-    public void setPublicEventFormState(){
+        createEventButton.setText("Update Event");
+
+        titleTextView.setText("Edit your event!");
 
     }
-    public void setInvitationEventFormState(){
+    public void setPublicEventFormState(Event event){
 
+        nameEditText.setText(event.getDetails().getTitle());
+        descriptionEditText.setText(event.getDetails().getDescription());
+        addressEditText.setText(event.getDetails().getAddress());
+        if(!event.getDetails().isPublic()){privateEventCheckbox.setChecked(false);}
+
+        //Get Date and time
+        Date startDate = new Date(event.getDetails().getStart());
+        dateStartEditText.setText(sdf.format(startDate));
+        timeStartEditText.setText(stf.format(startDate));
+        Date endDate = new Date(event.getDetails().getEnd());
+        dateEndEditText.setText(sdf.format(endDate));
+        timeEndEditText.setText(stf.format(endDate));
+
+        disableEditText(nameEditText);
+        disableEditText(descriptionEditText);
+        disableEditText(addressEditText);
+        disableEditText(timeStartEditText);
+        disableEditText(dateStartEditText);
+        disableEditText(timeEndEditText);
+        disableEditText(dateEndEditText);
+        titleTextView.setText("Public Event!");
+
+        createEventButton.setEnabled(false);
+        createEventButton.setVisibility(View.GONE);
+    }
+
+    private void disableEditText(EditText editText) {
+        editText.setFocusable(false);
+        editText.setEnabled(false);
+        editText.setCursorVisible(false);
+        editText.setKeyListener(null);
+        editText.setBackgroundColor(Color.TRANSPARENT);
+        editText.setTextColor(Color.BLACK);
+        editText.setTextSize(18);
+    }
+    public void setInvitationEventFormState(Event event){
+        nameEditText.setText(event.getDetails().getTitle());
+        descriptionEditText.setText(event.getDetails().getDescription());
+        addressEditText.setText(event.getDetails().getAddress());
+        if(!event.getDetails().isPublic()){privateEventCheckbox.setChecked(false);}
+
+        //Get Date and time
+        Date startDate = new Date(event.getDetails().getStart());
+        dateStartEditText.setText(sdf.format(startDate));
+        timeStartEditText.setText(stf.format(startDate));
+        Date endDate = new Date(event.getDetails().getEnd());
+        dateEndEditText.setText(sdf.format(endDate));
+        timeEndEditText.setText(stf.format(endDate));
+
+        disableEditText(nameEditText);
+        disableEditText(descriptionEditText);
+        disableEditText(addressEditText);
+        disableEditText(timeStartEditText);
+        disableEditText(dateStartEditText);
+        disableEditText(timeEndEditText);
+        disableEditText(dateEndEditText);
+
+        titleTextView.setText("You are invited!");
+
+        for(Invitation i: event.getInvitations()){
+            if(i.getUser().getID()==authorizer.getId() && i.isAccepted()){
+                createEventButton.setText("You are participating");
+                createEventButton.setEnabled(false);
+                createEventButton.setBackgroundColor(Color.CYAN);
+            }
+            else{
+                createEventButton.setText("Accept Event!");
+                createEventButton.setBackgroundColor(Color.GREEN);
+            }
+        }
     }
 }

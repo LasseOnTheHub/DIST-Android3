@@ -162,19 +162,19 @@
         </android.support.design.widget.TextInputLayout>
 
         <CheckBox
-            android:id="@+id/publicCheckBox"
+            android:id="@+id/privateCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:text="Public Event"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Private Event"
             app:layout_constraintHorizontal_bias="0.057"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/addressTextInputLayout"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" />
+            app:layout_constraintTop_toBottomOf="@+id/addressTextInputLayout" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/addressTextInputLayout"
@@ -192,7 +192,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Address"
-                android:singleLine="true" />
+                android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
@@ -209,7 +209,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             tools:layout_editor_absoluteY="451dp"
-            app:layout_constraintTop_toBottomOf="@+id/publicCheckBox"/>
+            app:layout_constraintTop_toBottomOf="@+id/privateCheckBox"/>
 
     </android.support.constraint.ConstraintLayout>
     </ScrollView>

@@ -1,5 +1,6 @@
 package com.dist.dist_android.Logic;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
+import com.dist.dist_android.Logic.CustomEventListeners.EventUpdatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
 import com.dist.dist_android.Logic.CustomEventListeners.SingleEventRecievedListener;
 import com.dist.dist_android.POJOS.EventPackage.Details;
@@ -95,6 +97,39 @@ public class EventProvider {
         };
         requestQueue.add(getRequest);
 
+    }
+
+    public void updateEvent(Details details,int eventId, final EventUpdatedListener listener) throws JSONException {
+        String url = baseUrl + "events/"+eventId;
+
+        final JSONObject jsonBody = new JSONObject(details.parseJSON());
+
+        Log.d("JSON",jsonBody.toString());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT,url, jsonBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (response!=null){
+                            Log.d(TAG,response.toString());
+                                listener.getResult(true);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR", "error => " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Bearer " + authorizer.getToken());
+                params.put("Content-Type","application/json");
+                return params;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
     }
 
     //Creates an event. If the event is created it will return the created event
@@ -256,7 +291,6 @@ public class EventProvider {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     }
                 }, new Response.ErrorListener() {

@@ -61,6 +61,9 @@ public class PublicEventsFragment extends Fragment {
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Fragment createFragment = new CreateEventFragment();
+                Bundle args = new Bundle();
+                args.putInt("EVENTID",0);
+                createFragment.setArguments(args);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.content, createFragment)
                         .commit();

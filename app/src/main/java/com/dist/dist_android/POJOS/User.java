@@ -5,14 +5,14 @@ package com.dist.dist_android.POJOS;
  */
 
 public class User {
-    private Integer ID;
+    private Integer id;
     private String username;
     private String firstname;
     private String lastname;
     private String email;
 
-    public User(Integer ID, String username) {
-        this.ID = ID;
+    public User(Integer id, String username) {
+        this.id = id;
         this.username = username;
     }
 
@@ -44,11 +44,11 @@ public class User {
     }
 
     public Integer getID() {
-        return ID;
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setID(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {
