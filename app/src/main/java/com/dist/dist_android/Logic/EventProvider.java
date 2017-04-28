@@ -5,10 +5,13 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
@@ -26,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -104,6 +108,7 @@ public class EventProvider {
 
         final JSONObject jsonBody = new JSONObject(details.parseJSON());
 
+        Log.d("JSON", url);
         Log.d("JSON",jsonBody.toString());
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT,url, jsonBody,
@@ -111,21 +116,33 @@ public class EventProvider {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (response!=null){
-                            Log.d(TAG,response.toString());
+                            //Log.d(TAG,response.toString());
                                 listener.getResult(true);
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR", "error => " + error.toString());
+                Log.d("JSON", "error => " + error.toString());
+
+                NetworkResponse response = error.networkResponse;
+                if (error instanceof ServerError && response != null && !response.data.toString().startsWith("<")) {
+                    try {
+                        String res = new String(response.data,
+                                HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+
+                        Log.d("JSON", res);
+                    } catch (UnsupportedEncodingException e1) {
+                        // Couldn't properly decode data to string
+                        e1.printStackTrace();
+                    }
+                }
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("Authorization", "Bearer " + authorizer.getToken());
-                params.put("Content-Type","application/json");
                 return params;
             }
         };

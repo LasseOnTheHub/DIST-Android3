@@ -3,34 +3,30 @@ package com.dist.dist_android.Activities;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.dist.dist_android.Fragments.CreateEventFragment;
 import com.dist.dist_android.Fragments.MyEventsFragment;
 import com.dist.dist_android.Fragments.MyInvitedEventsFragment;
-import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.RecyclerItemsClickedListener;
 import com.dist.dist_android.Logic.EventProvider;
 import com.dist.dist_android.Logic.EventsAdapter;
-import com.dist.dist_android.POJOS.EventPackage.Event;
 import com.dist.dist_android.R;
 import com.dist.dist_android.Fragments.PublicEventsFragment;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    private DrawerLayout mDrawerLayout;
     BottomNavigationView navigation;
     EventsAdapter eventsAdapter;
     EventProvider eventProvider;
-    ArrayList<Event> events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+
         eventsAdapter.setRecyclerItemsClickedListener(new RecyclerItemsClickedListener() {
             @Override
             public void onImageClick(int eventID) {
@@ -56,15 +53,19 @@ public class MainActivity extends AppCompatActivity {
                 Bundle args = new Bundle();
                 args.putInt("EVENTID",eventID);
                 createFragment.setArguments(args);
-                getSupportFragmentManager().beginTransaction()
+                getSupportFragmentManager()
+                        .beginTransaction()
                         .replace(R.id.content, createFragment)
+                        .addToBackStack("tag")
                         .commit();
             }
         });
 
         if (savedInstanceState == null) {
             Fragment fragment = new PublicEventsFragment();
-            getSupportFragmentManager().beginTransaction()
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .addToBackStack("tag")
                     .add(R.id.content, fragment,"PUBLIC_FRAGMENTS")  // tom container i layout
                     .commit();
         }
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                             !getSupportFragmentManager().findFragmentByTag("PUBLIC_FRAGMENT").isVisible()){
                         Fragment startFragment = new PublicEventsFragment();
                         getSupportFragmentManager().beginTransaction()
+                                .addToBackStack("tag")
                                 .replace(R.id.content, startFragment)
                                 .commit();
                     }
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                             !getSupportFragmentManager().findFragmentByTag("MY_EVENTS_FRAGMENT").isVisible()) {
                         Fragment myEventsFragment = new MyEventsFragment();
                         getSupportFragmentManager().beginTransaction()
+                                .addToBackStack("tag")
                                 .replace(R.id.content, myEventsFragment,"MY_EVENTS_FRAGMENT")
                                 .commit();
                     }
@@ -100,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         if(navigation.getSelectedItemId()!=item.getItemId()) {
                             Fragment invitedEventsFragment = new MyInvitedEventsFragment();
                             getSupportFragmentManager().beginTransaction()
+                                    .addToBackStack("tag")
                                     .replace(R.id.content, invitedEventsFragment,"INVITED_FRAGMENT")
                                     .commit();
                         }

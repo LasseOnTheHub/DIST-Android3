@@ -71,6 +71,8 @@ public class CreateEventFragment extends Fragment {
     SimpleDateFormat stf = new SimpleDateFormat(myTimeFormat);
     String formState = "CREATEEVENT";
     int eventID;
+    Event tmpevent;
+    Toolbar toolbar;
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -101,6 +103,7 @@ public class CreateEventFragment extends Fragment {
             EventProvider.getInstance().catchEvent(eventID, new SingleEventRecievedListener() {
                 @Override
                 public void getResult(Event event) {
+                    CreateEventFragment.this.tmpevent = event;
                     decideEventType(event);
                     switch (formState){
                         case "INVITATIONEVENT":
@@ -118,7 +121,7 @@ public class CreateEventFragment extends Fragment {
         }
 
 
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         //toolbar.setNavigationIcon(ContextCompat.getDrawable(rootView.getContext(),R.drawable.ic_keyboard_backspace_black_24dp));
         toolbar.setTitle("Opret Event");
 
@@ -147,6 +150,13 @@ public class CreateEventFragment extends Fragment {
 
                         return;
                     case "CREATEEVENT":
+                        try {
+                            createEvent(rootView.getContext());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         return;
                 }
                 try {
@@ -249,8 +259,8 @@ public class CreateEventFragment extends Fragment {
                 nameEditText.getText().toString(),
                 descriptionEditText.getText().toString(),
                 "www.etbillede.dk",
-                startDate.getTime()/1000,
-                endDate.getTime()/1000,
+                startDate.getTime(),
+                endDate.getTime(),
                 !privateEventCheckbox.isChecked(),
                 addressEditText.getText().toString(),
                 new EventCreatedListener<Event>() {
@@ -313,9 +323,9 @@ public class CreateEventFragment extends Fragment {
 
         eventDetails.setTitle(nameEditText.getText().toString());
         eventDetails.setDescription(descriptionEditText.getText().toString());
-        eventDetails.setImageURL("www.etbillede.dk");
-        eventDetails.setStart(startDate.getTime()/1000);
-        eventDetails.setEnd(endDate.getTime()/1000);
+        eventDetails.setImageURL(tmpevent.getDetails().getImageURL());
+        eventDetails.setStart(startDate.getTime());
+        eventDetails.setEnd(endDate.getTime());
         eventDetails.setPublic(!privateEventCheckbox.isChecked());
         eventDetails.setAddress(addressEditText.getText().toString());
 
@@ -360,10 +370,9 @@ public class CreateEventFragment extends Fragment {
         Date endDate = new Date(event.getDetails().getEnd());
         dateEndEditText.setText(sdf.format(endDate));
         timeEndEditText.setText(stf.format(endDate));
-
         createEventButton.setText("Update Event");
-
         titleTextView.setText("Edit your event!");
+        toolbar.setTitle("My Event");
 
     }
     public void setPublicEventFormState(Event event){
@@ -389,9 +398,9 @@ public class CreateEventFragment extends Fragment {
         disableEditText(timeEndEditText);
         disableEditText(dateEndEditText);
         titleTextView.setText("Public Event!");
-
         createEventButton.setEnabled(false);
         createEventButton.setVisibility(View.GONE);
+        toolbar.setTitle("Public event");
     }
 
     private void disableEditText(EditText editText) {
@@ -416,6 +425,7 @@ public class CreateEventFragment extends Fragment {
         Date endDate = new Date(event.getDetails().getEnd());
         dateEndEditText.setText(sdf.format(endDate));
         timeEndEditText.setText(stf.format(endDate));
+        toolbar.setTitle("My Invitation");
 
         disableEditText(nameEditText);
         disableEditText(descriptionEditText);

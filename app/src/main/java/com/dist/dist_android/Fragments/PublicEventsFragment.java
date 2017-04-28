@@ -27,6 +27,7 @@ import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
 import com.dist.dist_android.Logic.EventProvider;
 import com.dist.dist_android.POJOS.EventPackage.Event;
+import com.dist.dist_android.POJOS.Organizer;
 import com.dist.dist_android.R;
 import com.dist.dist_android.Logic.EventsAdapter;
 
@@ -65,6 +66,7 @@ public class PublicEventsFragment extends Fragment {
                 args.putInt("EVENTID",0);
                 createFragment.setArguments(args);
                 getFragmentManager().beginTransaction()
+                        .addToBackStack("tag")
                         .replace(R.id.content, createFragment)
                         .commit();
             }
@@ -86,9 +88,12 @@ public class PublicEventsFragment extends Fragment {
 
                 ArrayList<Event> subsetEvents = new ArrayList<>();
                 for (Event e: events) {
-                    if (e.getDetails().isPublic()){
-                        subsetEvents.add(e);
+                    for (Organizer o: e.getOrganizers()){
+                        if (e.getDetails().isPublic() && o.getUser().getID()!=authorizer.getId()){
+                            subsetEvents.add(e);
+                        }
                     }
+
                 }
 
                 //adapter = new EventsAdapter(rootView.getContext(), subsetEvents);

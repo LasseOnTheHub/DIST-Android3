@@ -63,6 +63,7 @@ public class MyEventsFragment extends Fragment {
                 args.putInt("EVENTID",0);
                 createFragment.setArguments(args);
                 getFragmentManager().beginTransaction()
+                        .addToBackStack("tag")
                         .replace(R.id.content, createFragment)
                         .commit();
             }
