@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +39,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 
 /**
@@ -55,24 +53,24 @@ public class CreateEventFragment extends Fragment {
     private EditText addressEditText;
     private EditText nameEditText;
     private EditText descriptionEditText;
+    private EditText imageEditText;
     private CheckBox privateEventCheckbox;
     private Button createEventButton;
     private TextView titleTextView;
-    private TextInputLayout nameInputLayout;
     private Authorizer authorizer;
     private Calendar myCalendar;
-    DatePickerDialog.OnDateSetListener startDate;
-    DatePickerDialog.OnDateSetListener endDate;
-    TimePickerDialog.OnTimeSetListener startTime;
-    TimePickerDialog.OnTimeSetListener endTime;
-    String myFormat = "dd/MM/yy";
-    SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
-    String myTimeFormat = "HH:mm";
-    SimpleDateFormat stf = new SimpleDateFormat(myTimeFormat);
-    String formState = "CREATEEVENT";
-    int eventID;
-    Event tmpevent;
-    Toolbar toolbar;
+    private DatePickerDialog.OnDateSetListener startDate;
+    private DatePickerDialog.OnDateSetListener endDate;
+    private TimePickerDialog.OnTimeSetListener startTime;
+    private TimePickerDialog.OnTimeSetListener endTime;
+    private final String myFormat = "dd/MM/yy";
+    private final SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+    private final String myTimeFormat = "HH:mm";
+    private final SimpleDateFormat stf = new SimpleDateFormat(myTimeFormat);
+    private String formState = "CREATEEVENT";
+    private int eventID;
+    private Event tmpevent;
+    private Toolbar toolbar;
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -91,7 +89,6 @@ public class CreateEventFragment extends Fragment {
         privateEventCheckbox = (CheckBox) rootView.findViewById(R.id.privateCheckBox);
         createEventButton = (Button) rootView.findViewById(R.id.createEventButton);
         titleTextView = (TextView) rootView.findViewById(R.id.textView3);
-        nameInputLayout = (TextInputLayout) rootView.findViewById(R.id.nameTextInputLayout);
 
         //Get arguments if any.
         Bundle bundle = getArguments();
@@ -255,10 +252,8 @@ public class CreateEventFragment extends Fragment {
         Log.d("time", String.valueOf(startDate.getTime()));
 
         EventProvider.getInstance().createEvent(
-                1,
                 nameEditText.getText().toString(),
                 descriptionEditText.getText().toString(),
-                "www.etbillede.dk",
                 startDate.getTime(),
                 endDate.getTime(),
                 !privateEventCheckbox.isChecked(),
@@ -290,7 +285,7 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
-    public void decideEventType(Event event){
+    private void decideEventType(Event event){
         if(event.getDetails().isPublic()) {
             formState = "PUBLICEVENT";
         }
@@ -310,7 +305,7 @@ public class CreateEventFragment extends Fragment {
         }
     }
 
-    public void updateEvent(final Context context) throws ParseException, JSONException {
+    private void updateEvent(final Context context) throws ParseException, JSONException {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
         String startDateTime = dateStartEditText.getText().toString()+" "+timeStartEditText.getText().toString();
@@ -329,24 +324,28 @@ public class CreateEventFragment extends Fragment {
         eventDetails.setPublic(!privateEventCheckbox.isChecked());
         eventDetails.setAddress(addressEditText.getText().toString());
 
+        /*
+        TODO: Make a check to see if end-date+time is before start-date+time. The backend will  not accept the update in case of.
+         */
+
         EventProvider.getInstance().updateEvent(eventDetails,eventID, new EventUpdatedListener() {
             @Override
             public void getResult(boolean result) {
-                if(result){
+                if(result) {
                     Toast.makeText(context,
-                            "Event " + eventID +" er blevet opdateret",
+                            "Der skete en fejl, prøv igen",
                             Toast.LENGTH_LONG).show();
                 }
                 else{
                     Toast.makeText(context,
-                            "Noget gik desværre galt, prøv igen.",
+                            "Event " + eventID + " er blevet opdateret",
                             Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    public void sendAcceptToInvitation(final Context context, int eventID, int userID) throws JSONException {
+    private void sendAcceptToInvitation(final Context context, int eventID, int userID) throws JSONException {
         EventProvider.getInstance().sendInvite(eventID, authorizer.getId(), new InvitationSentListener() {
             @Override
             public void getResult(Integer result) {
@@ -357,7 +356,7 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
-    public void setMyEventFormState(Event event){
+    private void setMyEventFormState(Event event){
         nameEditText.setText(event.getDetails().getTitle());
         descriptionEditText.setText(event.getDetails().getDescription());
         addressEditText.setText(event.getDetails().getAddress());
@@ -375,7 +374,7 @@ public class CreateEventFragment extends Fragment {
         toolbar.setTitle("My Event");
 
     }
-    public void setPublicEventFormState(Event event){
+    private void setPublicEventFormState(Event event){
 
         nameEditText.setText(event.getDetails().getTitle());
         descriptionEditText.setText(event.getDetails().getDescription());
@@ -397,6 +396,7 @@ public class CreateEventFragment extends Fragment {
         disableEditText(dateStartEditText);
         disableEditText(timeEndEditText);
         disableEditText(dateEndEditText);
+        privateEventCheckbox.setEnabled(false);
         titleTextView.setText("Public Event!");
         createEventButton.setEnabled(false);
         createEventButton.setVisibility(View.GONE);
@@ -412,7 +412,7 @@ public class CreateEventFragment extends Fragment {
         editText.setTextColor(Color.BLACK);
         editText.setTextSize(18);
     }
-    public void setInvitationEventFormState(Event event){
+    private void setInvitationEventFormState(Event event){
         nameEditText.setText(event.getDetails().getTitle());
         descriptionEditText.setText(event.getDetails().getDescription());
         addressEditText.setText(event.getDetails().getAddress());
@@ -434,7 +434,7 @@ public class CreateEventFragment extends Fragment {
         disableEditText(dateStartEditText);
         disableEditText(timeEndEditText);
         disableEditText(dateEndEditText);
-
+        privateEventCheckbox.setEnabled(false);
         titleTextView.setText("You are invited!");
 
         for(Invitation i: event.getInvitations()){

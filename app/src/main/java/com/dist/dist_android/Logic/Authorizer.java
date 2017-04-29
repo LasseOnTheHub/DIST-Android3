@@ -4,23 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Created by lbirk on 04-04-2017.
  */
 
 public class Authorizer {
 
-    SharedPreferences prefs;
-    SharedPreferences.Editor editor;
+    private final SharedPreferences prefs;
+    private final SharedPreferences.Editor editor;
 
     public Authorizer(Context context)
     {
@@ -33,8 +24,8 @@ public class Authorizer {
         editor.putString("token",token);
         editor.commit();
     }
-    public void setId(int id){
-        editor.putInt("id", id);
+    public void setId(){
+        editor.putInt("id", 120);
         editor.commit();
     }
 

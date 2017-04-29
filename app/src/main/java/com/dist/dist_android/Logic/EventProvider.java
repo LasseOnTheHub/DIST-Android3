@@ -1,6 +1,5 @@
 package com.dist.dist_android.Logic;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.util.Log;
 
@@ -9,9 +8,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
@@ -29,7 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,17 +38,17 @@ public class EventProvider {
 
     private static final String TAG = "EventProvider";
     private static EventProvider instance = null;
-    String baseUrl = "http://ubuntu4.javabog.dk:3028/rest/api/";
+    private final String baseUrl = "http://ubuntu4.javabog.dk:3028/rest/api/";
 
     //Volley Request queue
-    public RequestQueue requestQueue;
+    private final RequestQueue requestQueue;
 
-    ArrayList<Event> events;
-    Event event;
+    private ArrayList<Event> events;
+    private Event event;
     ArrayList<User> user;
     Event eventHolder;
 
-    Authorizer authorizer;
+    private final Authorizer authorizer;
 
     private EventProvider(Context context){
         requestQueue = Volley.newRequestQueue(context.getApplicationContext());
@@ -115,28 +111,15 @@ public class EventProvider {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if (response!=null){
-                            //Log.d(TAG,response.toString());
-                                listener.getResult(true);
-                        }
+                        listener.getResult(true);
+                        Log.d("JSON", "error => " + response.toString());
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("JSON", "error => " + error.toString());
-
                 NetworkResponse response = error.networkResponse;
-                if (error instanceof ServerError && response != null && !response.data.toString().startsWith("<")) {
-                    try {
-                        String res = new String(response.data,
-                                HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-
-                        Log.d("JSON", res);
-                    } catch (UnsupportedEncodingException e1) {
-                        // Couldn't properly decode data to string
-                        e1.printStackTrace();
-                    }
-                }
+                listener.getResult(false);
+                Log.d("JSON", "error => " + error.toString());
             }
         }) {
             @Override
@@ -151,10 +134,8 @@ public class EventProvider {
 
     //Creates an event. If the event is created it will return the created event
     //wich can be accessed through the listener.
-    public void createEvent(int id,
-                            String name,
+    public void createEvent(String name,
                             String description,
-                            String imageURL,
                             long start,
                             long end,
                             boolean isPublic,
@@ -166,7 +147,7 @@ public class EventProvider {
                 "title: \""+name +"\","+
                 "description: \""+ description +"\","+
                 "address: \""+ address +"\","+
-                "imageURL: \""+imageURL+"\","+
+                "imageURL: \""+ "www.etbillede.dk" +"\","+
                 "start: "+start+","+
                 "end: "+end+","+
                 "isPublic: "+isPublic+""+

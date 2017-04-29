@@ -19,13 +19,13 @@ public class Details {
     public Details() {
     }
 
-    public Details(String title,
-                   String description,
-                   String address,
-                   String imageURL,
-                   Long start,
-                   Long end,
-                   boolean isPublic) {
+    private Details(String title,
+                    String description,
+                    String address,
+                    String imageURL,
+                    Long start,
+                    Long end,
+                    boolean isPublic) {
         this.title = title;
         this.description = description;
         this.address = address;

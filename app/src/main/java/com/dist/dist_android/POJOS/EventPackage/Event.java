@@ -1,16 +1,10 @@
 package com.dist.dist_android.POJOS.EventPackage;
 
-import com.dist.dist_android.Fragments.MyEventsFragment;
 import com.dist.dist_android.POJOS.Organizer;
-import com.dist.dist_android.POJOS.User;
-import com.dist.dist_android.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * POJO to bind REST-feed to objects

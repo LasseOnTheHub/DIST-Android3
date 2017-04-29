@@ -5,5 +5,5 @@ package com.dist.dist_android.Logic.CustomEventListeners;
  */
 
 public interface InvitationSentListener{
-    public void getResult(Integer result);
+    void getResult(Integer result);
 }

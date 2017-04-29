@@ -5,5 +5,5 @@ package com.dist.dist_android.Logic.CustomEventListeners;
  */
 
 public interface EventUpdatedListener {
-    public void getResult(boolean result);
+    void getResult(boolean result);
 }

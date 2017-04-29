@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by lbirk on 27-04-2017.
  */
 
-public class GsonRequest<T> extends Request<T> {
+class GsonRequest<T> extends Request<T> {
     private final Gson gson = new Gson();
     private final Class<T> clazz;
     private final Map<String, String> headers;

@@ -1,15 +1,12 @@
 package com.dist.dist_android.Fragments;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import android.content.res.Resources;
 import android.graphics.Rect;
@@ -39,8 +36,8 @@ public class PublicEventsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private EventsAdapter adapter;
-    Authorizer authorizer;
-    ArrayList<Event> events;
+    private Authorizer authorizer;
+    private ArrayList<Event> events;
 
     OnFabPress mCallback;
 
@@ -77,7 +74,7 @@ public class PublicEventsFragment extends Fragment {
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(rootView.getContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(dpToPx()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
@@ -111,14 +108,14 @@ public class PublicEventsFragment extends Fragment {
      */
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
-        private int spanCount;
-        private int spacing;
-        private boolean includeEdge;
+        private final int spanCount;
+        private final int spacing;
+        private final boolean includeEdge;
 
-        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
-            this.spanCount = spanCount;
+        public GridSpacingItemDecoration(int spacing) {
+            this.spanCount = 2;
             this.spacing = spacing;
-            this.includeEdge = includeEdge;
+            this.includeEdge = true;
         }
 
         @Override
@@ -146,13 +143,13 @@ public class PublicEventsFragment extends Fragment {
     /**
      * Converting dp to pixel
      */
-    private int dpToPx(int dp) {
+    private int dpToPx() {
         Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, r.getDisplayMetrics()));
     }
 
     public interface OnFabPress {
-        public void onFabPress();
+        void onFabPress();
     }
 
 }

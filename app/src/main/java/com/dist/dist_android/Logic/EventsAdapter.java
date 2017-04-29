@@ -24,7 +24,7 @@ import java.util.List;
  */
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
-    private Context mContext;
+    private final Context mContext;
     private List<Event> eventList;
 
 
@@ -33,9 +33,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     private RecyclerItemsClickedListener recyclerItemsClickedListener;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, description;
-        public ImageView thumbnail, overflow;
-        public int          eventId;
+        public final TextView title;
+        public final TextView description;
+        public final ImageView thumbnail;
+        public final ImageView overflow;
+        public final int          eventId;
 
         public MyViewHolder(View view) {
             super(view);

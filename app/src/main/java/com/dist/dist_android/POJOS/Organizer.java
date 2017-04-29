@@ -1,7 +1,5 @@
 package com.dist.dist_android.POJOS;
 
-import java.io.Serializable;
-
 /**
  * Created by lbirk on 23-04-2017.
  */

@@ -38,8 +38,8 @@ public class MyEventsFragment extends Fragment {
     private EventsAdapter adapter;
 
     private Button testButton;
-    Authorizer authorizer;
-    ArrayList<Event> events;
+    private Authorizer authorizer;
+    private ArrayList<Event> events;
 
     public MyEventsFragment() {
         // Required empty public constructor
@@ -74,7 +74,7 @@ public class MyEventsFragment extends Fragment {
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(rootView.getContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(dpToPx()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
@@ -109,14 +109,14 @@ public class MyEventsFragment extends Fragment {
      */
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
-        private int spanCount;
-        private int spacing;
-        private boolean includeEdge;
+        private final int spanCount;
+        private final int spacing;
+        private final boolean includeEdge;
 
-        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
-            this.spanCount = spanCount;
+        public GridSpacingItemDecoration(int spacing) {
+            this.spanCount = 2;
             this.spacing = spacing;
-            this.includeEdge = includeEdge;
+            this.includeEdge = true;
         }
 
         @Override
@@ -144,9 +144,9 @@ public class MyEventsFragment extends Fragment {
     /**
      * Converting dp to pixel
      */
-    private int dpToPx(int dp) {
+    private int dpToPx() {
         Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, r.getDisplayMetrics()));
     }
 
 
