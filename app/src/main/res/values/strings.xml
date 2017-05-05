@@ -1,12 +1,3 @@
 <resources>
-    <string name="app_name">DIST-Android</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-
-    <!-- Strings related to login -->
-
-    <!-- Strings for Card view-->
-    <string name="action_add_favourite">Add to Favourites</string>
-    <string name="action_play_next">Play Next</string>
-
+    <string name="app_name">grp10AndroidClient</string>
 </resources>

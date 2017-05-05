@@ -97,13 +97,13 @@ public class CreateEventFragment extends Fragment {
         //from a onClick event on a existing event, and the values needs to be loaded for the correct state.
         eventID = 0;
         eventID = bundle.getInt("EVENTID");
-        if(eventID!=0){
+        if (eventID != 0) {
             EventProvider.getInstance().catchEvent(eventID, new SingleEventRecievedListener() {
                 @Override
                 public void getResult(Event event) {
                     CreateEventFragment.this.tmpevent = event;
                     decideEventType(event);
-                    switch (formState){
+                    switch (formState) {
                         case "INVITATIONEVENT":
                             setInvitationEventFormState(event);
                             return;
@@ -126,10 +126,10 @@ public class CreateEventFragment extends Fragment {
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (formState){
+                switch (formState) {
                     case "INVITATIONEVENT":
                         try {
-                            sendAcceptToInvitation(rootView.getContext(),eventID);
+                            sendAcceptToInvitation(rootView.getContext(), eventID);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -184,7 +184,7 @@ public class CreateEventFragment extends Fragment {
         startTime = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                timeStartEditText.setText(String.format("%02d:%02d",i,i1));
+                timeStartEditText.setText(String.format("%02d:%02d", i, i1));
             }
         };
 
@@ -198,7 +198,7 @@ public class CreateEventFragment extends Fragment {
         endTime = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                timeEndEditText.setText(String.format("%02d:%02d",i,i1));
+                timeEndEditText.setText(String.format("%02d:%02d", i, i1));
             }
         };
 
@@ -244,8 +244,8 @@ public class CreateEventFragment extends Fragment {
     private void createEvent(final Context context) throws JSONException, ParseException {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
-        String startDateTime = dateStartEditText.getText().toString()+" "+timeStartEditText.getText().toString();
-        String endDateTime = dateEndEditText.getText().toString()+" "+timeEndEditText.getText().toString();
+        String startDateTime = dateStartEditText.getText().toString() + " " + timeStartEditText.getText().toString();
+        String endDateTime = dateEndEditText.getText().toString() + " " + timeEndEditText.getText().toString();
         Date startDate = simpleDateFormat.parse(startDateTime);
         Date endDate = simpleDateFormat.parse(endDateTime);
 
@@ -261,9 +261,9 @@ public class CreateEventFragment extends Fragment {
                 new EventCreatedListener<Event>() {
                     @Override
                     public void getResult(Integer result) {
-                        if(result!=null){
+                        if (result != null) {
                             try {
-                                sendInvites(context,result);
+                                sendInvites(context, result);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -274,8 +274,9 @@ public class CreateEventFragment extends Fragment {
                     }
                 });
     }
-    private void sendInvites(final Context context, int eventID) throws JSONException{
-        EventProvider.getInstance().sendInvite(eventID,authorizer.getId(), new InvitationSentListener() {
+
+    private void sendInvites(final Context context, int eventID) throws JSONException {
+        EventProvider.getInstance().sendInvite(eventID, authorizer.getId(), new InvitationSentListener() {
             @Override
             public void getResult(Integer result) {
                 Toast.makeText(context,
@@ -285,21 +286,17 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
-    private void decideEventType(Event event){
-        if(event.getDetails().isPublic()) {
+    private void decideEventType(Event event) {
+        if (event.getDetails().isPublic()) {
             formState = "PUBLICEVENT";
         }
-        for(Invitation i: event.getInvitations())
-        {
-            if (i.getUser().getID() ==authorizer.getId())
-            {
+        for (Invitation i : event.getInvitations()) {
+            if (i.getUser().getID() == authorizer.getId()) {
                 formState = "INVITATIONEVENT";
             }
         }
-        for (Organizer o: event.getOrganizers())
-        {
-            if (o.getUser().getID()==authorizer.getId())
-            {
+        for (Organizer o : event.getOrganizers()) {
+            if (o.getUser().getID() == authorizer.getId()) {
                 formState = "MYEVENT";
             }
         }
@@ -308,8 +305,8 @@ public class CreateEventFragment extends Fragment {
     private void updateEvent(final Context context) throws ParseException, JSONException {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
-        String startDateTime = dateStartEditText.getText().toString()+" "+timeStartEditText.getText().toString();
-        String endDateTime = dateEndEditText.getText().toString()+" "+timeEndEditText.getText().toString();
+        String startDateTime = dateStartEditText.getText().toString() + " " + timeStartEditText.getText().toString();
+        String endDateTime = dateEndEditText.getText().toString() + " " + timeEndEditText.getText().toString();
         Date startDate = simpleDateFormat.parse(startDateTime);
         Date endDate = simpleDateFormat.parse(endDateTime);
 
@@ -328,15 +325,14 @@ public class CreateEventFragment extends Fragment {
         TODO: Make a check to see if end-date+time is before start-date+time. The backend will  not accept the update in case of.
          */
 
-        EventProvider.getInstance().updateEvent(eventDetails,eventID, new EventUpdatedListener() {
+        EventProvider.getInstance().updateEvent(eventDetails, eventID, new EventUpdatedListener() {
             @Override
             public void getResult(boolean result) {
-                if(result) {
+                if (result) {
                     Toast.makeText(context,
                             "Der skete en fejl, prøv igen",
                             Toast.LENGTH_LONG).show();
-                }
-                else{
+                } else {
                     Toast.makeText(context,
                             "Event " + eventID + " er blevet opdateret",
                             Toast.LENGTH_LONG).show();
@@ -346,9 +342,9 @@ public class CreateEventFragment extends Fragment {
     }
 
     private void sendAcceptToInvitation(final Context context, int eventID) throws JSONException {
-        int invitationId=0;
-        for(Invitation i: tmpevent.getInvitations()){
-            if(i.getUser().getID()==authorizer.getId()){
+        int invitationId = 0;
+        for (Invitation i : tmpevent.getInvitations()) {
+            if (i.getUser().getID() == authorizer.getId()) {
                 invitationId = i.getId();
             }
         }
@@ -362,11 +358,13 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
-    private void setMyEventFormState(Event event){
+    private void setMyEventFormState(Event event) {
         nameEditText.setText(event.getDetails().getTitle());
         descriptionEditText.setText(event.getDetails().getDescription());
         addressEditText.setText(event.getDetails().getAddress());
-        if(!event.getDetails().isPublic()){privateEventCheckbox.setChecked(false);}
+        if (!event.getDetails().isPublic()) {
+            privateEventCheckbox.setChecked(false);
+        }
 
         //Get Date and time
         Date startDate = new Date(event.getDetails().getStart());
@@ -380,12 +378,15 @@ public class CreateEventFragment extends Fragment {
         toolbar.setTitle("My Event");
 
     }
-    private void setPublicEventFormState(Event event){
+
+    private void setPublicEventFormState(Event event) {
 
         nameEditText.setText(event.getDetails().getTitle());
         descriptionEditText.setText(event.getDetails().getDescription());
         addressEditText.setText(event.getDetails().getAddress());
-        if(!event.getDetails().isPublic()){privateEventCheckbox.setChecked(false);}
+        if (!event.getDetails().isPublic()) {
+            privateEventCheckbox.setChecked(false);
+        }
 
         //Get Date and time
         Date startDate = new Date(event.getDetails().getStart());
@@ -418,11 +419,14 @@ public class CreateEventFragment extends Fragment {
         editText.setTextColor(Color.BLACK);
         editText.setTextSize(18);
     }
-    private void setInvitationEventFormState(Event event){
+
+    private void setInvitationEventFormState(Event event) {
         nameEditText.setText(event.getDetails().getTitle());
         descriptionEditText.setText(event.getDetails().getDescription());
         addressEditText.setText(event.getDetails().getAddress());
-        if(!event.getDetails().isPublic()){privateEventCheckbox.setChecked(false);}
+        if (!event.getDetails().isPublic()) {
+            privateEventCheckbox.setChecked(false);
+        }
 
         //Get Date and time
         Date startDate = new Date(event.getDetails().getStart());
@@ -443,13 +447,12 @@ public class CreateEventFragment extends Fragment {
         privateEventCheckbox.setEnabled(false);
         titleTextView.setText("You are invited!");
 
-        for(Invitation i: event.getInvitations()){
-            if(i.getUser().getID()==authorizer.getId() && i.isAccepted()){
+        for (Invitation i : event.getInvitations()) {
+            if (i.getUser().getID() == authorizer.getId() && i.isAccepted()) {
                 createEventButton.setText("You are participating");
                 createEventButton.setEnabled(false);
                 createEventButton.setBackgroundColor(Color.CYAN);
-            }
-            else{
+            } else {
                 createEventButton.setText("Accept Event!");
                 createEventButton.setBackgroundColor(Color.GREEN);
             }

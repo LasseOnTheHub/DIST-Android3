@@ -1,5 +1,6 @@
 package com.dist.dist_android.Activities;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -21,18 +22,14 @@ import com.dist.dist_android.R;
 import com.dist.dist_android.Fragments.PublicEventsFragment;
 
 
-
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navigation;
     private EventsAdapter eventsAdapter;
     Toolbar toolbar;
-    Fragment createEventFragment = new CreateEventFragment();
     Fragment publicEventFragment = new PublicEventsFragment();
     Fragment myEventsFragment = new MyEventsFragment();
     Fragment invitedEventsFragment = new MyInvitedEventsFragment();
-
-
 
     private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -56,13 +53,13 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void replaceFragment (Fragment fragment){
+    private void replaceFragment(Fragment fragment) {
         String backStateName = fragment.getClass().getName();
 
         FragmentManager manager = getSupportFragmentManager();
-        boolean fragmentPopped = manager.popBackStackImmediate (backStateName, 0);
+        boolean fragmentPopped = manager.popBackStackImmediate(backStateName, 0);
 
-        if (!fragmentPopped){ //fragment not in back stack, create it.
+        if (!fragmentPopped) { //fragment not in back stack, create it.
             FragmentTransaction ft = manager.beginTransaction();
             ft.replace(R.id.content, fragment);
             ft.addToBackStack(backStateName);
@@ -75,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         eventsAdapter = EventsAdapter.getInstance(this);
@@ -93,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Fragment createFragment = new CreateEventFragment();
                 Bundle args = new Bundle();
-                args.putInt("EVENTID",eventID);
+                args.putInt("EVENTID", eventID);
                 createFragment.setArguments(args);
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -106,9 +103,34 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.content, publicEventFragment,publicEventFragment.getClass().getName())  // tom container i layout
+                    //.addToBackStack(null)
+                    .add(R.id.content, publicEventFragment, publicEventFragment.getClass().getName())  // tom container i layout
                     .commit();
+        }
+    }
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
+        if (backStackEntryCount == 0) {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Click BACK again to log out", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        } else {
+            super.onBackPressed();
         }
     }
 

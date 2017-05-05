@@ -55,12 +55,12 @@ public class MyEventsFragment extends Fragment {
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
-        FloatingActionButton myFab = (FloatingActionButton)  rootView.findViewById(R.id.fab);
+        FloatingActionButton myFab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Fragment createFragment = new CreateEventFragment();
                 Bundle args = new Bundle();
-                args.putInt("EVENTID",0);
+                args.putInt("EVENTID", 0);
                 createFragment.setArguments(args);
                 getFragmentManager().beginTransaction()
                         .addToBackStack("tag")
@@ -84,10 +84,9 @@ public class MyEventsFragment extends Fragment {
             public void getResult(List<Event> events) {
 
                 ArrayList<Event> subsetEvents = new ArrayList<>();
-                for (Event e: events)
-                {
-                    for(Organizer o: e.getOrganizers()){
-                        if (o.getUser().getID()==authorizer.getId()){
+                for (Event e : events) {
+                    for (Organizer o : e.getOrganizers()) {
+                        if (o.getUser().getID() == authorizer.getId()) {
                             subsetEvents.add(e);
                             break;
                         }
@@ -141,6 +140,7 @@ public class MyEventsFragment extends Fragment {
             }
         }
     }
+
     /**
      * Converting dp to pixel
      */

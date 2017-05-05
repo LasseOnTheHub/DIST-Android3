@@ -1,5 +1,6 @@
 package com.dist.dist_android.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.Authorizer;
+import com.dist.dist_android.Logic.CustomEventListeners.LoginListener;
 import com.dist.dist_android.Logic.EventProvider;
 import com.dist.dist_android.R;
 
@@ -28,15 +30,17 @@ public class LoginActivity extends AppCompatActivity {
     private TextView statusText;
     private Button loginButton;
     private Authorizer authorizer;
+    private Context     context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = this;
 
-        authorizer = new Authorizer(this);
+        authorizer = new Authorizer(context);
         //Calls the EventProvider and adds the context only once
-        EventProvider.getInstance(this);
+        EventProvider.getInstance(context);
 
         usernameEditText = (EditText) findViewById(R.id.usernameeditText);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
@@ -48,56 +52,28 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    login();
+                    EventProvider.getInstance().Login(
+                            usernameEditText.getText().toString(),
+                            passwordEditText.getText().toString(),
+                            new LoginListener() {
+                                @Override
+                                public void result(boolean result) {
+                                    if (result){
+                                        Toast.makeText(context,"Success!",
+                                                Toast.LENGTH_LONG).show();
+                                        openMainActivity();
+                                    }
+                                    else{
+                                        Toast.makeText(context,"Oh no! Try again",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
-    }
-
-    private void login() throws JSONException {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://ubuntu4.javabog.dk:3028/rest/api/authentication";
-        final JSONObject jsonBody = new JSONObject("{" +
-                "username: " + usernameEditText.getText().toString().toLowerCase().trim() + "," +
-                "password: " + passwordEditText.getText().toString().trim() +
-                "}");
-
-        // Request a string response from the provided URL.
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,
-                new Response.Listener<JSONObject>() {
-                    String status;
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (response.toString() != "") {
-                            try {
-                                authorizer.setToken(response.getString("token"));
-                                JSONObject user = response.getJSONObject("user");
-                                authorizer.setId(user.getInt("id"));
-
-
-                                Toast.makeText(getApplicationContext(),
-                                        "Sucess: " + authorizer.getToken(),
-                                        Toast.LENGTH_LONG).show();
-                                openMainActivity();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Toast.makeText(getApplicationContext(),
-                                        "Error: " + e.getMessage(),
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),
-                        error.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        queue.add(jsonObjectRequest);
     }
 
     private void openMainActivity() {

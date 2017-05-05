@@ -13,28 +13,26 @@ public class Authorizer {
     private final SharedPreferences prefs;
     private final SharedPreferences.Editor editor;
 
-    public Authorizer(Context context)
-    {
+    public Authorizer(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         editor = prefs.edit();
     }
 
-    public void setToken(String token)
-    {
-        editor.putString("token",token);
+    public void setToken(String token) {
+        editor.putString("token", token);
         editor.commit();
     }
-    public void setId(int id){
+
+    public void setId(int id) {
         editor.putInt("id", id);
         editor.commit();
     }
 
-    public String getToken()
-    {
-        return prefs.getString("token","empty");
+    public String getToken() {
+        return prefs.getString("token", "empty");
     }
-    public Integer getId()
-    {
-        return prefs.getInt("id",0000);
+
+    public Integer getId() {
+        return prefs.getInt("id", 0000);
     }
 }

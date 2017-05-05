@@ -68,15 +68,12 @@ public class MyInvitedEventsFragment extends Fragment {
             public void getResult(List<Event> events) {
 
                 ArrayList<Event> subsetEvents = new ArrayList<>();
-                for (Event e: events)
-                {
-                    for(Invitation i: e.getInvitations())
-                    {
-                            if (i.getUser().getID() ==authorizer.getId())
-                            {
-                                subsetEvents.add(e);
-                                break;
-                            }
+                for (Event e : events) {
+                    for (Invitation i : e.getInvitations()) {
+                        if (i.getUser().getID() == authorizer.getId()) {
+                            subsetEvents.add(e);
+                            break;
+                        }
                     }
                 }
                 //adapter = new EventsAdapter(rootView.getContext(), subsetEvents);
@@ -126,6 +123,7 @@ public class MyInvitedEventsFragment extends Fragment {
             }
         }
     }
+
     /**
      * Converting dp to pixel
      */
