@@ -74,9 +74,9 @@ public class LoginActivity extends AppCompatActivity {
                         if (response.toString() != "") {
                             try {
                                 authorizer.setToken(response.getString("token"));
-                                //JSONObject user = response.getJSONObject("user");
-                                //authorizer.setId(user.getInt("id"));
-                                authorizer.setId();
+                                JSONObject user = response.getJSONObject("user");
+                                authorizer.setId(user.getInt("id"));
+
 
                                 Toast.makeText(getApplicationContext(),
                                         "Sucess: " + authorizer.getToken(),

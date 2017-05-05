@@ -138,8 +138,8 @@
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/descriptionInputLayout8"
-            android:layout_width="0dp"
-            android:layout_height="54dp"
+            android:layout_width="353dp"
+            android:layout_height="107dp"
             android:layout_marginEnd="24dp"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
@@ -150,12 +150,13 @@
             app:layout_constraintTop_toBottomOf="@+id/nameTextInputLayout"
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintRight_creator="1"
-            tools:layout_constraintTop_creator="1">
+            tools:layout_constraintTop_creator="1"
+            tools:layout_editor_absoluteY="73dp">
 
             <EditText
                 android:id="@+id/descriptionEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="83dp"
                 android:hint="Description"
                 android:inputType="textMultiLine" />
         </android.support.design.widget.TextInputLayout>

@@ -24,8 +24,8 @@ public class Authorizer {
         editor.putString("token",token);
         editor.commit();
     }
-    public void setId(){
-        editor.putInt("id", 120);
+    public void setId(int id){
+        editor.putInt("id", id);
         editor.commit();
     }
 

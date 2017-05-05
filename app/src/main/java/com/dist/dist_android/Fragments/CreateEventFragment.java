@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.dist.dist_android.Logic.Authorizer;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.EventUpdatedListener;
+import com.dist.dist_android.Logic.CustomEventListeners.InvitationAcceptListener;
 import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
 import com.dist.dist_android.Logic.CustomEventListeners.SingleEventRecievedListener;
 import com.dist.dist_android.Logic.EventProvider;
@@ -119,7 +120,6 @@ public class CreateEventFragment extends Fragment {
 
 
         toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        //toolbar.setNavigationIcon(ContextCompat.getDrawable(rootView.getContext(),R.drawable.ic_keyboard_backspace_black_24dp));
         toolbar.setTitle("Opret Event");
 
 
@@ -129,7 +129,7 @@ public class CreateEventFragment extends Fragment {
                 switch (formState){
                     case "INVITATIONEVENT":
                         try {
-                            sendAcceptToInvitation(rootView.getContext(),eventID,authorizer.getId());
+                            sendAcceptToInvitation(rootView.getContext(),eventID);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -275,7 +275,7 @@ public class CreateEventFragment extends Fragment {
                 });
     }
     private void sendInvites(final Context context, int eventID) throws JSONException{
-        EventProvider.getInstance().sendInvite(eventID,100, new InvitationSentListener() {
+        EventProvider.getInstance().sendInvite(eventID,authorizer.getId(), new InvitationSentListener() {
             @Override
             public void getResult(Integer result) {
                 Toast.makeText(context,
@@ -345,8 +345,14 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
-    private void sendAcceptToInvitation(final Context context, int eventID, int userID) throws JSONException {
-        EventProvider.getInstance().sendInvite(eventID, authorizer.getId(), new InvitationSentListener() {
+    private void sendAcceptToInvitation(final Context context, int eventID) throws JSONException {
+        int invitationId=0;
+        for(Invitation i: tmpevent.getInvitations()){
+            if(i.getUser().getID()==authorizer.getId()){
+                invitationId = i.getId();
+            }
+        }
+        EventProvider.getInstance().acceptInvite(eventID, invitationId, new InvitationAcceptListener() {
             @Override
             public void getResult(Integer result) {
                 Toast.makeText(context,

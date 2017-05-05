@@ -14,6 +14,7 @@ import com.android.volley.toolbox.Volley;
 import com.dist.dist_android.Logic.CustomEventListeners.EventCreatedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.EventRecievedListener;
 import com.dist.dist_android.Logic.CustomEventListeners.EventUpdatedListener;
+import com.dist.dist_android.Logic.CustomEventListeners.InvitationAcceptListener;
 import com.dist.dist_android.Logic.CustomEventListeners.InvitationSentListener;
 import com.dist.dist_android.Logic.CustomEventListeners.SingleEventRecievedListener;
 import com.dist.dist_android.POJOS.EventPackage.Details;
@@ -155,7 +156,6 @@ public class EventProvider {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,
                 new Response.Listener<JSONObject>() {
-                    String status;
                     @Override
                     public void onResponse(JSONObject response) {
                         if (response!=null){
@@ -271,15 +271,49 @@ public class EventProvider {
         requestQueue.add(getRequest);
     }
 
+    public void acceptInvite(int eventID, int invitationID, final InvitationAcceptListener listener) throws JSONException {
+        String url = baseUrl + "events/"+eventID+"/invitations/"+invitationID;
+
+        final JSONObject jsonBody = new JSONObject(
+                "{\"accepted\": true}");
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (response!=null){
+                            Log.d(TAG,response.toString());
+                            try {
+                                listener.getResult(response.getInt("id"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR", "error => " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Bearer " + authorizer.getToken());
+                return params;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
+    }
+
     public void sendInvite(int eventID, int invitedUser,final InvitationSentListener listener) throws JSONException {
         String url = baseUrl + "events/"+eventID+"/invitations";
-        final JSONObject jsonBody = new JSONObject("{" +
+        final JSONObject jsonBody = new JSONObject(
+                "{" +
                 "user_id:"+invitedUser+""+
                 "}");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,
                 new Response.Listener<JSONObject>() {
-                    String status;
                     @Override
                     public void onResponse(JSONObject response) {
                         if (response!=null){

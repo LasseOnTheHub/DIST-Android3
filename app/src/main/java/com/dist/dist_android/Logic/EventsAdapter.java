@@ -36,7 +36,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
         public final TextView title;
         public final TextView description;
         public final ImageView thumbnail;
-        public final ImageView overflow;
         public final int          eventId;
 
         public MyViewHolder(View view) {
@@ -44,7 +43,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
             title = (TextView) view.findViewById(R.id.title);
             description = (TextView) view.findViewById(R.id.count);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-            overflow = (ImageView) view.findViewById(R.id.overflow);
             eventId = 0;
         }
     }
@@ -102,12 +100,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
                     .into(holder.thumbnail);
         }
 
-        holder.overflow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupMenu(holder.overflow);
-            }
-        });
 
 
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
@@ -119,18 +111,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
         });
     }
 
-
-    /**
-     * Showing popup menu when tapping on 3 dots
-     */
-    private void showPopupMenu(View view) {
-        // inflate menu
-        PopupMenu popup = new PopupMenu(mContext, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_event, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
-        popup.show();
-    }
 
     /**
      * Click listener for popup menu items

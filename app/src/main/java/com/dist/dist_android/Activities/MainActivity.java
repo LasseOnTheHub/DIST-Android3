@@ -3,6 +3,8 @@ package com.dist.dist_android.Activities;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -24,59 +26,58 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navigation;
     private EventsAdapter eventsAdapter;
-    private EventProvider eventProvider;
+    Toolbar toolbar;
+    Fragment createEventFragment = new CreateEventFragment();
+    Fragment publicEventFragment = new PublicEventsFragment();
+    Fragment myEventsFragment = new MyEventsFragment();
+    Fragment invitedEventsFragment = new MyInvitedEventsFragment();
+
+
+
     private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_public:
-                    if(getSupportFragmentManager().findFragmentByTag("PUBLIC_FRAGMENT")==null ||
-                            !getSupportFragmentManager().findFragmentByTag("PUBLIC_FRAGMENT").isVisible()){
-                        Fragment startFragment = new PublicEventsFragment();
-                        getSupportFragmentManager().beginTransaction()
-                                .addToBackStack("tag")
-                                .replace(R.id.content, startFragment)
-                                .commit();
-                    }
+                    replaceFragment(publicEventFragment);
+                    toolbar.setTitle("Public Event");
                     return true;
                 case R.id.action_myEvents:
-                    if(getSupportFragmentManager().findFragmentByTag("MY_EVENTS_FRAGMENT")==null ||
-                            !getSupportFragmentManager().findFragmentByTag("MY_EVENTS_FRAGMENT").isVisible()) {
-                        Fragment myEventsFragment = new MyEventsFragment();
-                        getSupportFragmentManager().beginTransaction()
-                                .addToBackStack("tag")
-                                .replace(R.id.content, myEventsFragment,"MY_EVENTS_FRAGMENT")
-                                .commit();
-                    }
+                    replaceFragment(myEventsFragment);
+                    toolbar.setTitle("My Events");
                     return true;
                 case R.id.action_invited:
-                    if(getSupportFragmentManager().findFragmentByTag("INVITED_FRAGMENT")==null ||
-                            !getSupportFragmentManager().findFragmentByTag("INVITED_FRAGMENT").isVisible()) {
-                        if(navigation.getSelectedItemId()!=item.getItemId()) {
-                            Fragment invitedEventsFragment = new MyInvitedEventsFragment();
-                            getSupportFragmentManager().beginTransaction()
-                                    .addToBackStack("tag")
-                                    .replace(R.id.content, invitedEventsFragment,"INVITED_FRAGMENT")
-                                    .commit();
-                        }
-                    }
+                    replaceFragment(invitedEventsFragment);
+                    toolbar.setTitle("Invitations");
                     return true;
             }
             return false;
         }
-
     };
+
+    private void replaceFragment (Fragment fragment){
+        String backStateName = fragment.getClass().getName();
+
+        FragmentManager manager = getSupportFragmentManager();
+        boolean fragmentPopped = manager.popBackStackImmediate (backStateName, 0);
+
+        if (!fragmentPopped){ //fragment not in back stack, create it.
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.replace(R.id.content, fragment);
+            ft.addToBackStack(backStateName);
+            ft.commit();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        eventProvider = EventProvider.getInstance(this);
         eventsAdapter = EventsAdapter.getInstance(this);
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -97,17 +98,16 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content, createFragment)
-                        .addToBackStack("tag")
+                        .addToBackStack(null)
                         .commit();
             }
         });
 
         if (savedInstanceState == null) {
-            Fragment fragment = new PublicEventsFragment();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .addToBackStack("tag")
-                    .add(R.id.content, fragment,"PUBLIC_FRAGMENTS")  // tom container i layout
+                    .addToBackStack(null)
+                    .add(R.id.content, publicEventFragment,publicEventFragment.getClass().getName())  // tom container i layout
                     .commit();
         }
     }
