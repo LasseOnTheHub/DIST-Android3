@@ -251,31 +251,33 @@ public class CreateEventFragment extends Fragment {
 
         Log.d("time", String.valueOf(startDate.getTime()));
 
-        EventProvider.getInstance().createEvent(
-                nameEditText.getText().toString(),
-                descriptionEditText.getText().toString(),
-                startDate.getTime(),
-                endDate.getTime(),
-                !privateEventCheckbox.isChecked(),
-                addressEditText.getText().toString(),
-                new EventCreatedListener<Event>() {
-                    @Override
-                    public void getResult(Integer result) {
-                        if (result != null) {
-                            try {
-                                sendInvites(context, result);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+        if (startDate.getTime() < endDate.getTime()) {
+            EventProvider.getInstance().createEvent(
+                    nameEditText.getText().toString(),
+                    descriptionEditText.getText().toString(),
+                    startDate.getTime(),
+                    endDate.getTime()+1,
+                    !privateEventCheckbox.isChecked(),
+                    addressEditText.getText().toString(),
+                    new EventCreatedListener<Event>() {
+                        @Override
+                        public void getResult(Integer result) {
+                            Toast.makeText(context,
+                                    "Sucess: " + result.toString() + " got created",
+                                    Toast.LENGTH_LONG).show();
                         }
-                        Toast.makeText(context,
-                                "Sucess: " + result.toString() + " got created",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+                    });
+        }
+        else{
+            Toast.makeText(context,
+                    "The start date is after the end date, please correct",
+                    Toast.LENGTH_LONG).show();
     }
 
-    private void sendInvites(final Context context, int eventID) throws JSONException {
+
+    }
+
+/*    private void sendInvites(final Context context, int eventID) throws JSONException {
         EventProvider.getInstance().sendInvite(eventID, authorizer.getId(), new InvitationSentListener() {
             @Override
             public void getResult(Integer result) {
@@ -284,7 +286,7 @@ public class CreateEventFragment extends Fragment {
                         Toast.LENGTH_LONG).show();
             }
         });
-    }
+    }*/
 
     private void decideEventType(Event event) {
         if (event.getDetails().isPublic()) {
@@ -312,33 +314,31 @@ public class CreateEventFragment extends Fragment {
 
         Details eventDetails = new Details();
 
-
         eventDetails.setTitle(nameEditText.getText().toString());
         eventDetails.setDescription(descriptionEditText.getText().toString());
         eventDetails.setImageURL(tmpevent.getDetails().getImageURL());
         eventDetails.setStart(startDate.getTime());
-        eventDetails.setEnd(endDate.getTime());
+        eventDetails.setEnd(endDate.getTime()+1);
         eventDetails.setPublic(!privateEventCheckbox.isChecked());
         eventDetails.setAddress(addressEditText.getText().toString());
 
-        /*
-        TODO: Make a check to see if end-date+time is before start-date+time. The backend will  not accept the update in case of.
-         */
 
-        EventProvider.getInstance().updateEvent(eventDetails, eventID, new EventUpdatedListener() {
-            @Override
-            public void getResult(boolean result) {
-                if (result) {
-                    Toast.makeText(context,
-                            "Der skete en fejl, prøv igen",
-                            Toast.LENGTH_LONG).show();
-                } else {
+        if(eventDetails.getStart()<eventDetails.getEnd()) {
+            EventProvider.getInstance().updateEvent(eventDetails, eventID, new EventUpdatedListener() {
+
+                @Override
+                public void getResult(boolean result) {
                     Toast.makeText(context,
                             "Event " + eventID + " er blevet opdateret",
                             Toast.LENGTH_LONG).show();
                 }
-            }
-        });
+            });
+        }
+        else{
+            Toast.makeText(context,
+                    "The start date is after the end date, please correct",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     private void sendAcceptToInvitation(final Context context, int eventID) throws JSONException {
@@ -351,11 +351,12 @@ public class CreateEventFragment extends Fragment {
         EventProvider.getInstance().acceptInvite(eventID, invitationId, new InvitationAcceptListener() {
             @Override
             public void getResult(Integer result) {
-                Toast.makeText(context,
-                        "You are now participating in the event!",
-                        Toast.LENGTH_LONG).show();
+
             }
         });
+        Toast.makeText(context,
+                "You are now participating in the event!",
+                Toast.LENGTH_LONG).show();
     }
 
     private void setMyEventFormState(Event event) {
@@ -454,6 +455,7 @@ public class CreateEventFragment extends Fragment {
                 createEventButton.setBackgroundColor(Color.CYAN);
             } else {
                 createEventButton.setText("Accept Event!");
+                createEventButton.setEnabled(true);
                 createEventButton.setBackgroundColor(Color.GREEN);
             }
         }

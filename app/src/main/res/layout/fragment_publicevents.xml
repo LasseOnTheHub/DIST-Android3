@@ -28,6 +28,5 @@ app:borderWidth="5dp"
 app:elevation="8dp"
 app:fabSize="auto"
 android:layout_alignParentRight="true"
-android:layout_alignParentBottom="true"
-    />
+android:layout_alignParentBottom="true" />
     </RelativeLayout>

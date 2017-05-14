@@ -87,8 +87,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
          * Loads the provided thumbnailimage with the image URL
          * If no imageURL is provided, a placeholder image is used.
          */
-        if (event.getDetails().getImageURL().endsWith(".jpg") ||
-                event.getDetails().getImageURL().endsWith(".png")) {
+        if (event.getDetails().getImageURL().contains(".jpg") ||
+                event.getDetails().getImageURL().contains(".png")){
             Picasso.with(mContext)
                     .load(event.getDetails().getImageURL())
                     .into(holder.thumbnail);

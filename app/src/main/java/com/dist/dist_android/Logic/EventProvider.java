@@ -99,7 +99,6 @@ public class EventProvider {
             }
         };
         requestQueue.add(getRequest);
-
     }
 
     public void updateEvent(Details details, int eventId, final EventUpdatedListener listener) throws JSONException {
@@ -107,21 +106,16 @@ public class EventProvider {
 
         final JSONObject jsonBody = new JSONObject(details.parseJSON());
 
-        Log.d("JSON", url);
-        Log.d("JSON", jsonBody.toString());
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         listener.getResult(true);
-                        Log.d("JSON", "error => " + response.toString());
+                        Log.d("JSON", "Result " + response.toString());
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                NetworkResponse response = error.networkResponse;
-                listener.getResult(false);
                 Log.d("JSON", "error => " + error.toString());
             }
         }) {
@@ -150,7 +144,7 @@ public class EventProvider {
                 "title: \"" + name + "\"," +
                 "description: \"" + description + "\"," +
                 "address: \"" + address + "\"," +
-                "imageURL: \"" + "www.etbillede.dk" + "\"," +
+                "imageURL: \"" + "http://3.bp.blogspot.com/-xFIp1U2vz8w/UrBl-ZsVzyI/AAAAAAAACUE/qscQploleMg/s400/NoPhotoIcon.jpg" + "\"," +
                 "start: " + start + "," +
                 "end: " + end + "," +
                 "isPublic: " + isPublic + "" +
@@ -221,6 +215,7 @@ public class EventProvider {
                                     Invitation invitation = new Invitation();
                                     invitation.setId(jsonInvitations.getJSONObject(k).getInt("id"));
                                     invitation.setEvent(jsonInvitations.getJSONObject(k).getInt("event"));
+                                    invitation.setAccepted(jsonInvitations.getJSONObject(k).getBoolean("accepted"));
 
 
                                     User user = new User();
@@ -277,24 +272,20 @@ public class EventProvider {
         String url = baseUrl + "events/" + eventID + "/invitations/" + invitationID;
 
         final JSONObject jsonBody = new JSONObject(
-                "{\"accepted\": true}");
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, jsonBody,
+                "{\"accepted\":true}");
+        Log.d("JSON Update", jsonBody.toString());
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT,url, jsonBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (response != null) {
                             Log.d(TAG, response.toString());
-                            try {
-                                listener.getResult(response.getInt("id"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR", "error => " + error.toString());
+                Log.d("JSON Update", "error => " + error.toString());
             }
         }) {
             @Override

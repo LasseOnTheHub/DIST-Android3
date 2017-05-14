@@ -42,7 +42,6 @@ public class PublicEventsFragment extends Fragment {
     OnFabPress mCallback;
 
     public PublicEventsFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -93,7 +92,6 @@ public class PublicEventsFragment extends Fragment {
 
                 }
 
-                //adapter = new EventsAdapter(rootView.getContext(), subsetEvents);
                 adapter = EventsAdapter.getInstance();
                 adapter.setEventList(subsetEvents);
                 recyclerView.setAdapter(adapter);
